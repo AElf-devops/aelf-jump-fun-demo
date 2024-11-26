@@ -4,10 +4,10 @@ p# aelf-dapp-template-frontend
 
 This template assumes you have a basic understanding of React and JavaScript.
 
-- If you're new to React, 
-we recommend going through [React Foundations course](https://nextjs.org/learn/react-foundations) first 
-to learn the fundamentals of React, 
-such as components, props, state, and hooks, and newer features like Server Components and Suspense.
+- If you're new to React,
+  we recommend going through [React Foundations course](https://nextjs.org/learn/react-foundations) first
+  to learn the fundamentals of React,
+  such as components, props, state, and hooks, and newer features like Server Components and Suspense.
 - Scan the [Learn Next.js](https://nextjs.org/learn/dashboard-app) to get a sense of the framework's main features.
 
 ## Next use
