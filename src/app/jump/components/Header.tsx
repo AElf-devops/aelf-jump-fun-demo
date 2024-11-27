@@ -1,5 +1,4 @@
-// components/Header.js
-
+"use client";
 import { useState, useEffect } from "react";
 import {
   onConnectBtnClickHandler,
