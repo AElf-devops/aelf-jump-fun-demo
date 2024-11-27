@@ -1,0 +1,61 @@
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background: url("https://jump-static.pages.dev/image/asset/web-bg.svg") center
+    top no-repeat;
+  background-color: #0e0c15;
+  color: white;
+  margin: 0;
+  padding: 0;
+}
+.container {
+  background:
+    url(//jump-static.pages.dev/image/asset/mint-top-bg.jpg) no-repeat center
+      top,
+    url(//jump-static.pages.dev/image/asset/mint-bottom-bg.jpg) no-repeat center
+      bottom;
+  padding: 80px 0;
+}
+.home {
+  padding-top: 8px;
+  padding-bottom: 80px;
+  min-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+.home-create-btn {
+  border: 1px solid #d028fa;
+  background: linear-gradient(180deg, #d028fa00, #d028fa99);
+  color: #fff;
+} */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer base {
+  body {
+    @apply bg-[url('https://jump-static.pages.dev/image/asset/web-bg.svg')] bg-top bg-no-repeat bg-[#0e0c15] text-white m-0 p-0;
+  }
+}
+
+@layer components {
+  .container {
+    background-image: url("//jump-static.pages.dev/image/asset/mint-top-bg.jpg"),
+      url("//jump-static.pages.dev/image/asset/mint-bottom-bg.jpg");
+    background-repeat: no-repeat;
+    background-position:
+      center top,
+      center bottom;
+    padding: 80px 0;
+  }
+
+  .home {
+    @apply pt-2 pb-20 min-w-[1200px] mx-auto w-full;
+  }
+
+  .home-create-btn {
+    @apply border border-[#d028fa] bg-gradient-to-b from-[#d028fa00] to-[#d028fa99] text-white;
+  }
+}

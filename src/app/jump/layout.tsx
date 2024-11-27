@@ -1,7 +1,7 @@
 "use client";
 import WebLoginProvider from "@/app/demos/web-login/providers";
 import Header from "./components/Header";
-import "./global.css";
+import "./index.css";
 
 export default function Layout({
   children, // will be a page or nested layout

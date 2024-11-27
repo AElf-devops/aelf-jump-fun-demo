@@ -79,7 +79,7 @@ const CreateForm = () => {
             <textarea
               className="w-full p-3 bg-gray-700 text-white border-2 border-gray-600 rounded-lg"
               placeholder="max: 180 characters"
-              rows="4"
+              rows={4}
             ></textarea>
           </div>
 
