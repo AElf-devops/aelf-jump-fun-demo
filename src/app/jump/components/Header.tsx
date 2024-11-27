@@ -32,7 +32,12 @@ const Header = () => {
       className={`fixed z-50 top-0 left-0 right-0  transition-all duration-300 bg-transparent min-w-[1350px]`}
     >
       <div className="flex justify-between items-center w-[1358px] m-auto bg-[#ffffff0d] h-[86px] relative">
-        <div className="text-4xl font-bold">JUMPFUN</div>
+        <div
+          className="text-4xl font-bold text-white cursor-pointer"
+          onClick={() => router.push("/jump")}
+        >
+          JUMPFUN
+        </div>
         <div>
           <button
             className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-full mr-5"
@@ -41,7 +46,7 @@ const Header = () => {
             Donate
           </button>
           <button
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full"
+            className="bg-purple-200 hover:bg-purple-300 text-purple-700 px-6 py-2 rounded-full"
             onClick={() => {
               if (walletInfo?.address) {
                 onDisConnectBtnClickHandler(disConnectWallet);

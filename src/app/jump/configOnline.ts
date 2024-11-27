@@ -6,10 +6,11 @@ import { NetworkEnum } from "@aelf-web-login/wallet-adapter-base";
 
 const CHAIN_ID = "AELF";
 const EXPLORE_URL = "https://aelf-test-node.aelf.io/";
-
+const SYMBOL = "ELF";
 const JUMP_FUN_CONFIG = {
   CHAIN_ID,
   EXPLORE_URL,
+  SYMBOL,
 };
 
 // Portkey

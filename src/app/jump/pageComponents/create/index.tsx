@@ -1,5 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
+import { Input } from "aelf-design";
+import { Upload } from "antd";
 
 const CreateForm = () => {
   const router = useRouter();
@@ -8,8 +10,11 @@ const CreateForm = () => {
     router.back();
   };
 
+  const handleChange = e => {
+    console.log(e, "eeee");
+  };
   return (
-    <div className="flex justify-center min-h-screen relative w-[1358px] m-auto">
+    <div className="flex justify-center relative w-[1358px] m-auto">
       <button
         onClick={handleBack}
         className="text-white text-lg flex mb-6 absolute left-0 justify-center items-center"
@@ -42,8 +47,14 @@ const CreateForm = () => {
             <label className="block text-sm font-semibold text-gray-400 mb-2">
               Token Image
             </label>
-            <div className="flex justify-center items-center w-full h-40 bg-gray-700 border-2 border-gray-600 rounded-lg">
-              <button className="text-white font-semibold">+ Add</button>
+            <div className="flex justify-center items-center h-40 ">
+              <Upload
+                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                listType="picture-card"
+                onChange={handleChange}
+              >
+                <div className="text-white font-semibold">+ Add</div>
+              </Upload>
             </div>
           </div>
 
@@ -53,19 +64,19 @@ const CreateForm = () => {
               <label className="block text-sm font-semibold text-gray-400 mb-2">
                 Token Name
               </label>
-              <input
+              <Input
                 type="text"
-                className="w-full p-3 bg-gray-700 text-white border-2 border-gray-600 rounded-lg"
+                // className="w-full p-3 bg-gray-700 text-white border-2 border-gray-600 rounded-lg !important"
                 placeholder="e.g. JUMP.FUN"
               />
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-400 mb-2">
-                Ticker
+                Symbol
               </label>
-              <input
+              <Input
                 type="text"
-                className="w-full p-3 bg-gray-700 text-white border-2 border-gray-600 rounded-lg"
+                // className="w-full p-3 bg-gray-700 text-white border-2 border-gray-600 rounded-lg !important"
                 placeholder="e.g. JUMP"
               />
             </div>
@@ -76,15 +87,15 @@ const CreateForm = () => {
             <label className="block text-sm font-semibold text-gray-400 mb-2">
               Description
             </label>
-            <textarea
-              className="w-full p-3 bg-gray-700 text-white border-2 border-gray-600 rounded-lg"
+            <Input.TextArea
+              // className="w-full p-3 bg-gray-700 text-white border-2 border-gray-600 rounded-lg"
               placeholder="max: 180 characters"
               rows={4}
-            ></textarea>
+            ></Input.TextArea>
           </div>
 
           {/* Normal Launch and Initial Purchase */}
-          <div className="mb-6">
+          {/* <div className="mb-6">
             <label className="block text-sm font-semibold text-gray-400 mb-2">
               Launch Type
             </label>
@@ -98,7 +109,7 @@ const CreateForm = () => {
               <label className="block text-sm font-semibold text-gray-400 mb-2">
                 Liquidity Loans
               </label>
-              <input
+              <Input
                 type="number"
                 className="w-full p-3 bg-gray-700 text-white border-2 border-gray-600 rounded-lg"
                 defaultValue="6.0"
@@ -116,14 +127,14 @@ const CreateForm = () => {
                 <option value="0.10 ETH">0.10 ETH</option>
               </select>
             </div>
-          </div>
+          </div> */}
 
           {/* Optional Links */}
-          <div className="mb-6">
+          {/* <div className="mb-6">
             <label className="block text-sm font-semibold text-gray-400 mb-2">
               Please enter your official X
             </label>
-            <input
+            <Input
               type="text"
               className="w-full p-3 bg-gray-700 text-white border-2 border-gray-600 rounded-lg mb-4"
               placeholder="Official X"
@@ -131,7 +142,7 @@ const CreateForm = () => {
             <label className="block text-sm font-semibold text-gray-400 mb-2">
               Please enter your official telegram
             </label>
-            <input
+            <Input
               type="text"
               className="w-full p-3 bg-gray-700 text-white border-2 border-gray-600 rounded-lg mb-4"
               placeholder="Official Telegram"
@@ -139,15 +150,15 @@ const CreateForm = () => {
             <label className="block text-sm font-semibold text-gray-400 mb-2">
               Please enter your official website
             </label>
-            <input
+            <Input
               type="text"
               className="w-full p-3 bg-gray-700 text-white border-2 border-gray-600 rounded-lg"
               placeholder="Official Website"
             />
-          </div>
+          </div> */}
 
           {/* Bottom section with total amount */}
-          <div className="grid grid-cols-2 gap-6 mb-6">
+          {/* <div className="grid grid-cols-2 gap-6 mb-6">
             <div>
               <label className="block text-sm font-semibold text-gray-400 mb-2">
                 Liquidity Loans
@@ -166,19 +177,19 @@ const CreateForm = () => {
                 <span className="text-white">ETH</span>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Submit Button */}
           <div className="mb-6">
             <button className="w-full p-3 bg-purple-600 text-white font-semibold rounded-lg">
-              Create (0.06 ETH)
+              Create (0.06 ELF)
             </button>
           </div>
 
           {/* Balance Section */}
           <div className="text-white">
             <span className="text-sm">Balance: </span>
-            <span className="font-semibold">0.00 ETH</span>
+            <span className="font-semibold">0.00 ELF</span>
           </div>
         </form>
       </div>

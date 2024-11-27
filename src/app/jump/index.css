@@ -8,7 +8,7 @@
 }
 
 @layer components {
-  .container {
+  .page-container {
     background-image: url("//jump-static.pages.dev/image/asset/mint-top-bg.jpg"),
       url("//jump-static.pages.dev/image/asset/mint-bottom-bg.jpg");
     background-repeat: no-repeat;
