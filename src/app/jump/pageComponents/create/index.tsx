@@ -10,7 +10,7 @@ const CreateForm = () => {
     router.back();
   };
 
-  const handleChange = e => {
+  const handleChange = (e: any) => {
     console.log(e, "eeee");
   };
   return (
