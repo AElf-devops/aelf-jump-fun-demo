@@ -5,7 +5,9 @@ export default function Home() {
   return (
     <>
       <WebLoginProvider>
-        <div>123</div>
+        <DiceCard />
+        <TransferDemo />
+        <DiceMethods />
       </WebLoginProvider>
     </>
   );

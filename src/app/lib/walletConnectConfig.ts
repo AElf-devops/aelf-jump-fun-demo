@@ -1,38 +1,24 @@
-import { PortkeyDiscoverWallet } from '@aelf-web-login/wallet-adapter-portkey-discover';
-import { PortkeyAAWallet } from '@aelf-web-login/wallet-adapter-portkey-aa';
-import { NightElfWallet } from '@aelf-web-login/wallet-adapter-night-elf';
-import { IConfigProps } from '@aelf-web-login/wallet-adapter-bridge';
+import { PortkeyDiscoverWallet } from "@aelf-web-login/wallet-adapter-portkey-discover";
+import { PortkeyAAWallet } from "@aelf-web-login/wallet-adapter-portkey-aa";
+import { NightElfWallet } from "@aelf-web-login/wallet-adapter-night-elf";
+import { IConfigProps } from "@aelf-web-login/wallet-adapter-bridge";
 import {
   TChainId,
   SignInDesignEnum,
   // NetworkEnum,
-} from '@aelf-web-login/wallet-adapter-base';
-import { PORTKEY_CONFIG } from '@/app/dice/config';
+} from "@aelf-web-login/wallet-adapter-base";
+import { PORTKEY_CONFIG } from "@/app/jump/config";
 
-const APP_NAME = 'explorer.aelf.io';
-const WEBSITE_ICON = 'https://explorer.aelf.io/favicon.main.ico';
-const CHAIN_ID = 'AELF' as TChainId;
-// const NETWORK_TYPE = NetworkEnum.TESTNET;
-// const NETWORK_TYPE = NetworkEnum.MAINNET;
-const RPC_SERVER_AELF = 'https://aelf-test-node.aelf.io';
-const RPC_SERVER_TDVV = 'https://tdvv-public-node.aelf.io';
-const RPC_SERVER_TDVW = 'https://tdvw-test-node.aelf.io';
-// const GRAPHQL_SERVER =
-//   'https://dapp-aa-portkey.portkey.finance/aefinder-v2/api/app/graphql/portkey';
-// const CONNECT_SERVER = 'https://auth-aa-portkey.portkey.finance';
-// const SERVICE_SERVER = 'https://aa-portkey.portkey.finance';
-// const GRAPHQL_SERVER =
-//   'https://dapp-aa-portkey-test.portkey.finance/Portkey_DID/PortKeyIndexerCASchema/graphql';
-// const CONNECT_SERVER = 'https://auth-aa-portkey-test.portkey.finance';
-// const SERVICE_SERVER = 'https://aa-portkey-test.portkey.finance';
-const TELEGRAM_BOT_ID = 'xx';
+const APP_NAME = "explorer.aelf.io";
+const WEBSITE_ICON = "https://explorer.aelf.io/favicon.main.ico";
+const CHAIN_ID = "AELF" as TChainId;
+const RPC_SERVER_AELF = "https://aelf-test-node.aelf.io";
+const RPC_SERVER_TDVV = "https://tdvv-public-node.aelf.io";
+const RPC_SERVER_TDVW = "https://tdvw-test-node.aelf.io";
+const TELEGRAM_BOT_ID = "xx";
 
-const {
-  NETWORK_TYPE,
-  GRAPHQL_SERVER,
-  CONNECT_SERVER,
-  SERVICE_SERVER,
-} = PORTKEY_CONFIG;
+const { NETWORK_TYPE, GRAPHQL_SERVER, CONNECT_SERVER, SERVICE_SERVER } =
+  PORTKEY_CONFIG;
 
 const didConfig = {
   graphQLUrl: GRAPHQL_SERVER,
@@ -74,8 +60,8 @@ const baseConfig = {
   keyboard: true,
   noCommonBaseModal: false,
   design: SignInDesignEnum.CryptoDesign, // "SocialDesign" | "CryptoDesign" | "Web2Design"
-  titleForSocialDesign: 'Crypto wallet',
-  iconSrcForSocialDesign: 'url or base64',
+  titleForSocialDesign: "Crypto wallet",
+  iconSrcForSocialDesign: "url or base64",
 };
 
 const wallets = [
@@ -101,15 +87,15 @@ const wallets = [
     defaultRpcUrl: RPC_SERVER_AELF,
     nodes: {
       AELF: {
-        chainId: 'AELF',
+        chainId: "AELF",
         rpcUrl: RPC_SERVER_AELF,
       },
       tDVW: {
-        chainId: 'tDVW',
+        chainId: "tDVW",
         rpcUrl: RPC_SERVER_TDVW,
       },
       tDVV: {
-        chainId: 'tDVV',
+        chainId: "tDVV",
         rpcUrl: RPC_SERVER_TDVV,
       },
     },
