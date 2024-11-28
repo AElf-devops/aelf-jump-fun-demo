@@ -99,7 +99,7 @@ const CreateForm = () => {
             <label className="block text-sm font-semibold text-gray-400 mb-2">
               Launch Type
             </label>
-            <button className="w-full p-3 bg-purple-600 text-white font-semibold rounded-lg mb-4">
+            <button className="w-full p-3 bg-blue-600 text-white font-semibold rounded-lg mb-4">
               Normal Launch
             </button>
           </div>
@@ -181,7 +181,7 @@ const CreateForm = () => {
 
           {/* Submit Button */}
           <div className="mb-6">
-            <button className="w-full p-3 bg-purple-600 text-white font-semibold rounded-lg">
+            <button className="w-full p-3 bg-blue-600 text-white font-semibold rounded-lg">
               Create (0.06 ELF)
             </button>
           </div>

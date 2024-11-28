@@ -40,13 +40,13 @@ const Header = () => {
         </div>
         <div>
           <button
-            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-full mr-5"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full mr-5"
             onClick={() => router.push("/jump/donate")}
           >
             Donate
           </button>
           <button
-            className="bg-purple-200 hover:bg-purple-300 text-purple-700 px-6 py-2 rounded-full"
+            className="bg-blue-200 hover:bg-blue-300 text-blue-700 px-6 py-2 rounded-full"
             onClick={() => {
               if (walletInfo?.address) {
                 onDisConnectBtnClickHandler(disConnectWallet);

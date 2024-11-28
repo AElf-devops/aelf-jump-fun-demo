@@ -3,7 +3,7 @@
 @tailwind utilities;
 @layer base {
   body {
-    @apply bg-[url('https://jump-static.pages.dev/image/asset/web-bg.svg')] bg-top bg-no-repeat bg-[#0e0c15] text-white m-0 p-0;
+    @apply !bg-[url('https://jump-static.pages.dev/image/asset/web-bg.svg')] bg-top bg-no-repeat !bg-[#0e0c15] text-white m-0 p-0;
   }
 }
 
@@ -23,6 +23,6 @@
   }
 
   .home-create-btn {
-    @apply border border-[#d028fa] bg-gradient-to-b from-[#d028fa00] to-[#d028fa99] text-white;
+    @apply border border-[#028dfa] bg-gradient-to-b from-[#028dfa00] to-[#028dfa99] text-white;
   }
 }

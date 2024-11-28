@@ -63,7 +63,7 @@ const DonorPage = () => {
       </div>
       <button
         onClick={toggleModal}
-        className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-4 rounded-full shadow-lg transition-transform transform hover:scale-105"
+        className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-full shadow-lg transition-transform transform hover:scale-105"
       >
         Donate
       </button>
@@ -99,7 +99,7 @@ const DonorPage = () => {
                 onClick={() => {
                   console.log("donate");
                 }}
-                className="bg-purple-300 hover:bg-purple-400 text-black py-2 px-4 rounded-full"
+                className="bg-blue-300 hover:bg-blue-400 text-black py-2 px-4 rounded-full"
               >
                 Donate
               </button>
