@@ -1,4 +1,11 @@
-import WebLoginProvider from "@/app/demos/web-login/providers";
+// import WebLoginProvider from "@/app/demos/web-login/providers";
+import dynamic from "next/dynamic";
+const WebLoginProvider = dynamic(
+  () => import("@/app/demos/web-login/providers"),
+  {
+    ssr: false,
+  }
+);
 import Header from "./components/Header";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { AelfdRegistry } from "@aelf-design/nextjs-registry";
