@@ -7,11 +7,11 @@ import {
   SignInDesignEnum,
   // NetworkEnum,
 } from "@aelf-web-login/wallet-adapter-base";
-import { PORTKEY_CONFIG } from "@/app/jump/config";
+import { JUMP_FUN_CONFIG, PORTKEY_CONFIG } from "@/app/jump/config";
 
 const APP_NAME = "explorer.aelf.io";
 const WEBSITE_ICON = "https://explorer.aelf.io/favicon.main.ico";
-const CHAIN_ID = "AELF" as TChainId;
+const CHAIN_ID = JUMP_FUN_CONFIG.CHAIN_ID;
 const RPC_SERVER_AELF = "https://aelf-test-node.aelf.io";
 const RPC_SERVER_TDVV = "https://tdvv-public-node.aelf.io";
 const RPC_SERVER_TDVW = "https://tdvw-test-node.aelf.io";

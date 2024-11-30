@@ -1,3 +1,3 @@
-"use client";
-import JumpPage from "@/app/jump/page";
-export default JumpPage;
+export default function Page() {
+  return <h1>HOME</h1>;
+}

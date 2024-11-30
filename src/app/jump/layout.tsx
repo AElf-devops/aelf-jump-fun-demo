@@ -16,7 +16,10 @@ export default function Layout({
         <WebLoginProvider>
           <ConfigProvider
             theme={{
-              token: {},
+              token: {
+                colorTextDisabled: "#272A3A",
+                colorBgContainerDisabled: "#A0C4FF",
+              },
               components: {
                 Table: {
                   headerBg: "#1B1D2A",
@@ -26,6 +29,10 @@ export default function Layout({
                   colorBgContainer: "#1B1D2A",
                   colorText: "#FFFFFF",
                   headerSplitColor: "#272A3A",
+                },
+                Button: {
+                  defaultColor: "#FFFFFF",
+                  defaultBg: "#1E90FF",
                 },
               },
             }}

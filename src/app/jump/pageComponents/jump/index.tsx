@@ -1,102 +1,87 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Table, Tag } from "antd";
-import { UpOutlined, DownOutlined } from "@ant-design/icons";
+import Image from "next/image";
+import { useConnectWallet } from "@aelf-web-login/wallet-adapter-react";
+import { CONTRACT_ADDRESS, JUMP_FUN_CONFIG } from "../../configOnline";
+import { DataResponse, TokenItem, TokenList } from "../../types";
+import { formatTokenAmount } from "../../utils/addressFormat";
 export default function JumpFun() {
   const router = useRouter();
   const onGotoCreate = useCallback(() => {
     router.push("/jump/create");
   }, []);
 
-  const data = [
-    {
-      rank: 1,
-      ticker: "$AMIX",
-      price: "$0.02405",
-      priceChange: "+60.44%",
-      liquidity: "151.39K",
-      marketCap: "$1.01M",
-    },
-    {
-      rank: 2,
-      ticker: "$RooPi",
-      price: "$0.01420",
-      priceChange: "+367.03%",
-      liquidity: "112.40K",
-      marketCap: "$597.78K",
-    },
-    {
-      rank: 3,
-      ticker: "$DONKEY",
-      price: "$0.01270",
-      priceChange: "+14.95%",
-      liquidity: "33.31K",
-      marketCap: "$53.46K",
-    },
-    {
-      rank: 4,
-      ticker: "$KAPIBALA",
-      price: "$0.01246",
-      priceChange: "+143.94%",
-      liquidity: "33.01K",
-      marketCap: "$52.43K",
-    },
-    {
-      rank: 5,
-      ticker: "$JumpCAT",
-      price: "$0.01118",
-      priceChange: "-8.49%",
-      liquidity: "31.41K",
-      marketCap: "$47.06K",
-    },
-  ];
+  const [data, setData] = useState<TokenItem[]>([]);
 
   const columns = [
     {
-      title: "Rank",
-      dataIndex: "rank",
-      key: "rank",
-      render: (text: any) => <a>{text}</a>,
-    },
-    {
-      title: "Ticker",
-      dataIndex: "ticker",
-      key: "ticker",
-      render: (text: any) => <a>{text}</a>,
-    },
-    {
-      title: "Price",
-      dataIndex: "price",
-      key: "price",
+      title: "Symbol",
+      dataIndex: "symbol",
+      key: "symbol",
       render: (text: any) => <span>{text}</span>,
     },
     {
-      title: "Price Change",
-      dataIndex: "priceChange",
-      key: "priceChange",
-      render: (text: string) => (
-        <Tag color={text.includes("+") ? "green" : "volcano"}>
-          {text}
-          {text.includes("+") ? <UpOutlined /> : <DownOutlined />}
-        </Tag>
-      ),
+      title: "Cost",
+      dataIndex: "cost",
+      key: "cost",
+      render: (text: any, record: any) => {
+        const decimal = record.decimals;
+        const amount = formatTokenAmount(text || "", decimal);
+        return <span>{amount}</span>;
+      },
     },
     {
-      title: "Liquidity",
-      dataIndex: "liquidity",
-      key: "liquidity",
+      title: "TokenName",
+      dataIndex: "tokenName",
+      key: "tokenName",
       render: (text: any) => <span>{text}</span>,
     },
     {
-      title: "Market Cap",
-      dataIndex: "marketCap",
-      key: "marketCap",
-      render: (text: any) => <span>{text}</span>,
+      title: "Image",
+      dataIndex: "image",
+      key: "image",
+      render: (text: any, record: any) => {
+        return (
+          <Image
+            src={record.externalInfo.value.__ft_image_uri}
+            alt="External Image"
+            width={50}
+            height={50}
+          />
+        );
+      },
     },
   ];
-
+  const { walletInfo, callViewMethod } = useConnectWallet();
+  const getList = async () => {
+    const rs: DataResponse<TokenList> = await callViewMethod({
+      chainId: JUMP_FUN_CONFIG.CHAIN_ID,
+      contractAddress: CONTRACT_ADDRESS.JUMPFUN,
+      methodName: "GetTokenInfos",
+      args: walletInfo?.address,
+    });
+    setData(rs?.data?.data);
+  };
+  useEffect(() => {
+    const getData = () => {
+      if (walletInfo?.address) {
+        getList();
+      } else {
+        setData([]);
+      }
+    };
+    getData();
+    const intervalId = setInterval(() => {
+      // get list
+      getData();
+    }, 30000);
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [walletInfo?.address]);
   return (
     <div className="home flex align-middle justify-center flex-col">
       <div className="home-banner p-t-[190px] flex items-center relative flex-col w-[1200px] my-20 m-auto">
@@ -108,7 +93,9 @@ export default function JumpFun() {
         </button>
       </div>
       <div className="w-[1200px] m-auto">
-        <h2 className="text-[32px] font-bold text-white mb-5">Top 5 Jump</h2>
+        <h2 className="text-[32px] font-bold text-white mb-5">
+          Create History
+        </h2>
         <Table
           columns={columns}
           dataSource={data}

@@ -39,12 +39,12 @@ const Header = () => {
           JUMPFUN
         </div>
         <div>
-          <button
+          {/* <button
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full mr-5"
             onClick={() => router.push("/jump/donate")}
           >
             Donate
-          </button>
+          </button> */}
           <button
             className="bg-blue-200 hover:bg-blue-300 text-blue-700 px-6 py-2 rounded-full"
             onClick={() => {

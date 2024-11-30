@@ -1,18 +1,261 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { Input } from "aelf-design";
-import { Upload } from "antd";
+import { Button, message as antdMessage, Upload, Form } from "antd";
+import type { UploadRequestOption } from "rc-upload/lib/interface";
+import { useAWSUploadService } from "../../utils/S3";
+import type { UploadProps } from "antd/es/upload/interface";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useConnectWallet } from "@aelf-web-login/wallet-adapter-react";
+import { JUMP_FUN_CONFIG } from "../../config";
+import { BalanceData, DataResponse, TokenInfoData } from "../../types";
+import { CONTRACT_ADDRESS } from "../../configOnline";
+import { formatTokenAmount } from "../../utils/addressFormat";
+import debounce from "lodash.debounce";
+import { fetcher } from "../../utils/fetcher";
+import BigNumber from "bignumber.js";
 
-const CreateForm = () => {
+const CreateForm: React.FC = () => {
   const router = useRouter();
-
   const handleBack = () => {
     router.back();
   };
-
-  const handleChange = (e: any) => {
-    console.log(e, "eeee");
+  const [loading, setLoading] = useState(false);
+  const { walletInfo, callViewMethod, callSendMethod } = useConnectWallet();
+  // upload image
+  const [uploadUrl, setUploadUrl] = useState("");
+  const handleChange: UploadProps["onChange"] = ({ fileList }) => {
+    if (!fileList || !fileList.length) return;
+    const file = fileList[0];
+    setLoading(file.status === "uploading");
+    if (file.status === "uploading") {
+      antdMessage.loading("uploading");
+    }
+    if (file.status === "done") {
+      console.log(file, "file");
+      antdMessage.success(`${file.name || ""} file uploaded successfully.`);
+      setUploadUrl(file.response?.url);
+    }
   };
+  const { awsUploadFile } = useAWSUploadService();
+  const customUpload = async ({
+    file,
+    onSuccess,
+    onError,
+  }: UploadRequestOption) => {
+    try {
+      const uploadFile = await awsUploadFile(file as File);
+      onSuccess &&
+        onSuccess({
+          url: uploadFile,
+        });
+    } catch (error) {
+      onError && onError(error as Error);
+    }
+  };
+  const beforeUpload = async (file: File) => {
+    const isJpgOrPng =
+      file.type === "image/jpeg" ||
+      file.type === "image/png" ||
+      file.type === "image/svg" ||
+      file.type === "image/svg+xml";
+    if (!isJpgOrPng) {
+      antdMessage.error("You can only upload JPG/PNG/SVG file!");
+    }
+    const isLt2M = file.size / 1024 / 1024 < 100;
+    if (!isLt2M) {
+      antdMessage.error("Image must smaller than 100MB!");
+    }
+    return isJpgOrPng && isLt2M;
+  };
+
+  // get balance
+  const [balanceData, setBalanceData] = useState<BalanceData>();
+
+  const getBalance = useCallback(async () => {
+    try {
+      setLoading(true);
+      const rs = await callViewMethod({
+        chainId: JUMP_FUN_CONFIG.CHAIN_ID,
+        contractAddress: CONTRACT_ADDRESS.TOKEN,
+        methodName: "GetBalance",
+        args: {
+          symbol: JUMP_FUN_CONFIG.SYMBOL,
+          owner: walletInfo?.address as string,
+        },
+      });
+      return rs;
+    } catch (e) {
+      return 0;
+    } finally {
+      setLoading(false);
+    }
+  }, [callViewMethod, walletInfo?.address]);
+
+  // get decimal
+  const [decimal, setDecimal] = useState<number>(JUMP_FUN_CONFIG.DECIMAL);
+  const getDecimal = useCallback(async () => {
+    try {
+      setLoading(true);
+      const rs = await callViewMethod({
+        chainId: JUMP_FUN_CONFIG.CHAIN_ID,
+        contractAddress: CONTRACT_ADDRESS.TOKEN,
+        methodName: "GetTokenInfo",
+        args: {
+          symbol: JUMP_FUN_CONFIG.SYMBOL,
+        },
+      });
+      return rs;
+    } catch (e) {
+      return JUMP_FUN_CONFIG.SYMBOL;
+    } finally {
+      setLoading(false);
+    }
+  }, [callViewMethod]);
+
+  useEffect(() => {
+    const getInfo = async () => {
+      const balanceRes = await getBalance();
+      setBalanceData((balanceRes as DataResponse<BalanceData>)?.data);
+    };
+    getInfo();
+  }, [getBalance, walletInfo]);
+
+  useEffect(() => {
+    const getInfo = async () => {
+      const decimalRes = await getDecimal();
+      console.log(decimalRes, "decimalRes");
+      setDecimal((decimalRes as DataResponse<TokenInfoData>)?.data?.decimals);
+    };
+    getInfo();
+  }, [getDecimal, walletInfo]);
+
+  // token name
+  const [tokenName, setTokenName] = useState<string>("");
+  const handleTokenNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    setTokenName(inputValue);
+  };
+
+  // symbol
+  const [symbolInfo, setSymbolInfo] = useState<any>({});
+  const [error, setError] = useState("");
+  const debouncedChange = useCallback(
+    debounce(async (input: string) => {
+      if (!input) return;
+      // get symbol price
+      try {
+        const {
+          code,
+          data,
+          message: msg,
+        } = await fetcher(
+          "https://test.eforest.finance/symbolmarket/api/app/seed/search-symbol-info",
+          {
+            queryParams: {
+              symbol: input,
+              tokenType: "FT",
+            },
+          }
+        );
+        if (code === "20000") {
+          setSymbolInfo(data);
+        } else {
+          setSymbolInfo(data);
+          antdMessage.error(msg);
+        }
+      } catch (e) {
+        console.error(e, "get symbol price");
+      }
+    }, 500),
+    []
+  );
+  const [symbol, setSymbol] = useState<string>("");
+  const regex = /^[A-Z]{1,10}$/;
+  const handleSymbolChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+
+    if (inputValue && !regex.test(inputValue)) {
+      setError(
+        "The maximum length of token symbol supported is 10. Please search for a shorter symbol."
+      );
+      setSymbol(inputValue.slice(0, inputValue.length - 1));
+      inputValue.slice(0, inputValue.length - 1) !== symbol &&
+        debouncedChange(inputValue.slice(0, inputValue.length - 1));
+    } else {
+      setError("");
+      setSymbol(inputValue);
+      inputValue !== symbol && debouncedChange(inputValue);
+    }
+  };
+  const handleSymbolBlur = () => {
+    if (regex.test(symbol)) {
+      setError("");
+    }
+  };
+
+  // button
+  const disabled = useMemo(() => {
+    return (
+      !walletInfo?.address ||
+      !tokenName ||
+      !symbol ||
+      !uploadUrl ||
+      new BigNumber(symbolInfo?.tokenPrice?.amount).gt(
+        new BigNumber(balanceData?.balance || Infinity)
+      )
+    );
+  }, [tokenName, symbol, uploadUrl, walletInfo?.address]);
+  const createToken = async () => {
+    try {
+      setLoading(true);
+      const amount = symbolInfo.tokenPrice.amount;
+      // approve
+      const approveRs: any = await callSendMethod({
+        chainId: JUMP_FUN_CONFIG.CHAIN_ID,
+        contractAddress: CONTRACT_ADDRESS.TOKEN,
+        methodName: "Approve",
+        args: {
+          symbol: JUMP_FUN_CONFIG.SYMBOL,
+          spender: CONTRACT_ADDRESS.JUMPFUN,
+          amount: new BigNumber(amount)
+            .times(new BigNumber(10).pow(decimal))
+            .toString(),
+        },
+      });
+
+      if (!approveRs.error && approveRs.data.Status === "MINED") {
+        await callSendMethod({
+          chainId: JUMP_FUN_CONFIG.CHAIN_ID,
+          contractAddress: CONTRACT_ADDRESS.JUMPFUN,
+          methodName: "Create",
+          args: {
+            symbol,
+            tokenName: tokenName,
+            imageUri: uploadUrl,
+            cost: new BigNumber(amount)
+              .times(new BigNumber(10).pow(decimal))
+              .toString(),
+          },
+        });
+        antdMessage.success("Create success");
+        setTimeout(() => {
+          router.push("/jump");
+        }, 500);
+      } else {
+        throw new Error("Approve failed");
+      }
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        antdMessage.error(e.message);
+      } else {
+        antdMessage.error("Unknown error");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="flex justify-center relative w-[1358px] m-auto">
       <button
@@ -37,7 +280,7 @@ const CreateForm = () => {
       </button>
       <div className="w-full max-w-2xl bg-gray-800 p-8 rounded-lg shadow-lg mt-8">
         {/* Form */}
-        <form>
+        <Form layout="vertical">
           <h1 className="text-3xl font-bold text-white mb-8 text-center">
             Create
           </h1>
@@ -49,9 +292,12 @@ const CreateForm = () => {
             </label>
             <div className="flex justify-center items-center h-40 ">
               <Upload
-                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                accept=".jpeg,.jpg,.png,.svg"
+                maxCount={1}
                 listType="picture-card"
+                customRequest={customUpload}
                 onChange={handleChange}
+                beforeUpload={beforeUpload}
               >
                 <div className="text-white font-semibold">+ Add</div>
               </Upload>
@@ -60,138 +306,72 @@ const CreateForm = () => {
 
           {/* Token Name and Ticker */}
           <div className="grid grid-cols-2 gap-6 mb-6">
-            <div>
-              <label className="block text-sm font-semibold text-gray-400 mb-2">
-                Token Name
-              </label>
+            <Form.Item
+              label={
+                <label className="block text-sm font-semibold text-gray-400 mb-2">
+                  Token Name
+                </label>
+              }
+            >
               <Input
                 type="text"
-                // className="w-full p-3 bg-gray-700 text-white border-2 border-gray-600 rounded-lg !important"
+                value={tokenName}
                 placeholder="e.g. JUMP.FUN"
+                onChange={handleTokenNameChange}
               />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-400 mb-2">
-                Symbol
-              </label>
+            </Form.Item>
+            <Form.Item
+              label={
+                <label className="block text-sm font-semibold text-gray-400 mb-2">
+                  Seed
+                </label>
+              }
+              validateStatus={error ? "error" : "success"}
+              help={error || ""}
+            >
               <Input
                 type="text"
-                // className="w-full p-3 bg-gray-700 text-white border-2 border-gray-600 rounded-lg !important"
+                value={symbol}
                 placeholder="e.g. JUMP"
+                onChange={handleSymbolChange}
+                onBlur={handleSymbolBlur}
               />
-            </div>
+            </Form.Item>
           </div>
 
           {/* Description */}
-          <div className="mb-6">
+          {/* <div className="mb-6">
             <label className="block text-sm font-semibold text-gray-400 mb-2">
               Description
             </label>
             <Input.TextArea
-              // className="w-full p-3 bg-gray-700 text-white border-2 border-gray-600 rounded-lg"
               placeholder="max: 180 characters"
               rows={4}
             ></Input.TextArea>
-          </div>
-
-          {/* Normal Launch and Initial Purchase */}
-          {/* <div className="mb-6">
-            <label className="block text-sm font-semibold text-gray-400 mb-2">
-              Launch Type
-            </label>
-            <button className="w-full p-3 bg-blue-600 text-white font-semibold rounded-lg mb-4">
-              Normal Launch
-            </button>
-          </div>
-
-          <div className="grid grid-cols-2 gap-6 mb-6">
-            <div>
-              <label className="block text-sm font-semibold text-gray-400 mb-2">
-                Liquidity Loans
-              </label>
-              <Input
-                type="number"
-                className="w-full p-3 bg-gray-700 text-white border-2 border-gray-600 rounded-lg"
-                defaultValue="6.0"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-400 mb-2">
-                Initial Purchase
-              </label>
-              <select
-                className="w-full p-3 bg-gray-700 text-white border-2 border-gray-600 rounded-lg"
-                defaultValue="0.06 ETH"
-              >
-                <option value="0.06 ETH">0.06 ETH</option>
-                <option value="0.10 ETH">0.10 ETH</option>
-              </select>
-            </div>
-          </div> */}
-
-          {/* Optional Links */}
-          {/* <div className="mb-6">
-            <label className="block text-sm font-semibold text-gray-400 mb-2">
-              Please enter your official X
-            </label>
-            <Input
-              type="text"
-              className="w-full p-3 bg-gray-700 text-white border-2 border-gray-600 rounded-lg mb-4"
-              placeholder="Official X"
-            />
-            <label className="block text-sm font-semibold text-gray-400 mb-2">
-              Please enter your official telegram
-            </label>
-            <Input
-              type="text"
-              className="w-full p-3 bg-gray-700 text-white border-2 border-gray-600 rounded-lg mb-4"
-              placeholder="Official Telegram"
-            />
-            <label className="block text-sm font-semibold text-gray-400 mb-2">
-              Please enter your official website
-            </label>
-            <Input
-              type="text"
-              className="w-full p-3 bg-gray-700 text-white border-2 border-gray-600 rounded-lg"
-              placeholder="Official Website"
-            />
-          </div> */}
-
-          {/* Bottom section with total amount */}
-          {/* <div className="grid grid-cols-2 gap-6 mb-6">
-            <div>
-              <label className="block text-sm font-semibold text-gray-400 mb-2">
-                Liquidity Loans
-              </label>
-              <div className="flex items-center space-x-2">
-                <span className="text-white">6.0</span>
-                <span className="text-white">ETH</span>
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-400 mb-2">
-                Initial Purchase
-              </label>
-              <div className="flex items-center space-x-2">
-                <span className="text-white">0.06</span>
-                <span className="text-white">ETH</span>
-              </div>
-            </div>
           </div> */}
 
           {/* Submit Button */}
           <div className="mb-6">
-            <button className="w-full p-3 bg-blue-600 text-white font-semibold rounded-lg">
-              Create (0.06 ELF)
-            </button>
+            <Button
+              className="!w-full !p-3 !h-[54px]"
+              disabled={disabled}
+              type="primary"
+              onClick={createToken}
+              loading={loading}
+            >
+              Create ({symbolInfo?.tokenPrice?.amount || 0}
+              ELF)
+            </Button>
           </div>
 
           {/* Balance Section */}
           <div className="text-white">
             <span className="text-sm">Balance: </span>
-            <span className="font-semibold">0.00 ELF</span>
+            <span className="font-semibold">
+              {formatTokenAmount(balanceData?.balance || "", decimal)} ELF
+            </span>
           </div>
-        </form>
+        </Form>
       </div>
     </div>
   );
