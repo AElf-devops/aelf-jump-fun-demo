@@ -86,7 +86,7 @@ export default function JumpFun() {
     <div className="home flex align-middle justify-center flex-col">
       <div className="home-banner p-t-[190px] flex items-center relative flex-col w-[1200px] my-20 m-auto">
         <button
-          className="home-create-btn w-[340px] h-[64px] p-[0 56px] text-[22px] flex items-center justify-center font-bold"
+          className="home-create-btn w-[340px] h-[64px] p-[0 56px] text-[22px] flex items-center justify-center font-bold text-black"
           onClick={() => onGotoCreate()}
         >
           <Image
