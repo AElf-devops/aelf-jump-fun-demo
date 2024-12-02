@@ -46,7 +46,7 @@ const Header = () => {
             Donate
           </button> */}
           <button
-            className="bg-white text-blue-900 py-2 px-6 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-600"
+            className="bg-white text-blue-900 py-2 px-6 rounded-lg font-bold hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-600"
             onClick={() => {
               if (walletInfo?.address) {
                 onDisConnectBtnClickHandler(disConnectWallet);

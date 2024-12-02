@@ -30,11 +30,11 @@ export default function Layout({
               },
               components: {
                 Table: {
-                  headerBg: "#000000BF",
+                  headerBg: "#000000C0",
                   headerColor: "#FFFFFF",
                   rowHoverBg: "#22252DBF",
                   borderColor: "#22252DBF",
-                  colorBgContainer: "#000000BF",
+                  colorBgContainer: "#000000C0",
                   colorText: "#FFFFFF",
                   headerSplitColor: "#22252DBF",
                 },
