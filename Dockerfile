@@ -1,12 +1,5 @@
-FROM cgr.dev/chainguard/wolfi-base
+FROM cgr.dev/chainguard/node
 WORKDIR /app
-
-ARG version=20
-
-RUN apk add nodejs-${version} && \
-	chown -R nonroot:nonroot /app/
-
-USER nonroot
 
 ENV NODE_ENV=production
 # Uncomment the following line in case you want to disable telemetry during runtime.
@@ -24,4 +17,4 @@ ENV PORT=3000
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output
 ENV HOSTNAME="0.0.0.0"
-CMD ["node", "server.js"]
+CMD ["server.js"]
