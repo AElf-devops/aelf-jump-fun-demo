@@ -44,3 +44,13 @@ body,
     @apply rounded-full border border-black bg-white shadow-[2px_2px_0px_0px_#000];
   }
 }
+.ant-table-wrapper .ant-table-thead .ant-table-cell,
+.ant-table-wrapper .ant-table-tbody .ant-table-cell {
+  background-color: #000000c0;
+}
+.ant-table-tbody > tr.ant-table-placeholder {
+  background-color: inherit !important;
+}
+.ant-table-cell-row-hover {
+  background-color: #22252dbf !important;
+}
