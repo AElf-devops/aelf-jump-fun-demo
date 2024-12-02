@@ -24,28 +24,28 @@ export default function Layout({
           <ConfigProvider
             theme={{
               token: {
-                colorTextDisabled: "#272A3A",
-                colorBgContainerDisabled: "#A0C4FF",
+                colorTextDisabled: "#FFFFFF",
+                colorBgContainerDisabled: "#0e3068",
               },
               components: {
                 Table: {
-                  headerBg: "#1B1D2A",
+                  headerBg: "#0e3068",
                   headerColor: "#FFFFFF",
                   rowHoverBg: "#21243A",
                   borderColor: "#272A3A",
-                  colorBgContainer: "#1B1D2A",
+                  colorBgContainer: "#0e3068",
                   colorText: "#FFFFFF",
                   headerSplitColor: "#272A3A",
                 },
                 Button: {
                   defaultColor: "#FFFFFF",
-                  defaultBg: "#1E90FF",
+                  defaultBg: "#0f4984",
                 },
               },
             }}
           >
             <Header />
-            <div className="mt-24 w-full page-container m-auto">{children}</div>
+            <div className="w-full page-container m-auto">{children}</div>
           </ConfigProvider>
         </WebLoginProvider>
       </AelfdRegistry>

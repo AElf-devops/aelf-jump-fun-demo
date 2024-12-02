@@ -31,7 +31,7 @@ const Header = () => {
     <header
       className={`fixed z-50 top-0 left-0 right-0  transition-all duration-300 bg-transparent min-w-[1350px]`}
     >
-      <div className="flex justify-between items-center w-[1358px] m-auto bg-[#ffffff0d] h-[86px] relative">
+      <div className="flex justify-between items-center w-[1358px] m-auto h-[86px] relative">
         <div
           className="text-4xl font-bold text-white cursor-pointer"
           onClick={() => router.push("/jump")}
@@ -46,7 +46,7 @@ const Header = () => {
             Donate
           </button> */}
           <button
-            className="bg-blue-200 hover:bg-blue-300 text-blue-700 px-6 py-2 rounded-full"
+            className="bg-white text-blue-900 py-2 px-6 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-600"
             onClick={() => {
               if (walletInfo?.address) {
                 onDisConnectBtnClickHandler(disConnectWallet);

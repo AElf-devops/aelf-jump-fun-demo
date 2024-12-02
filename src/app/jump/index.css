@@ -9,13 +9,13 @@
 
 @layer components {
   .page-container {
-    background-image: url("//jump-static.pages.dev/image/asset/mint-top-bg.jpg"),
-      url("//jump-static.pages.dev/image/asset/mint-bottom-bg.jpg");
-    background-repeat: no-repeat;
+    background-image: url("https://png.pngtree.com/background/20210709/original/pngtree-blue-starry-background-picture-image_932697.jpg");
+    background-repeat: repeat;
     background-position:
       center top,
       center bottom;
-    padding: 80px 0;
+    height: 100vh;
+    padding: 150px 0;
   }
 
   .home {
@@ -23,6 +23,6 @@
   }
 
   .home-create-btn {
-    @apply border border-[#028dfa] bg-gradient-to-b from-[#028dfa00] to-[#028dfa99] text-white;
+    @apply border border-[#028dfa] bg-gradient-to-b from-[#028dfa00] to-[#0e3068] text-white;
   }
 }

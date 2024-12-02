@@ -25,7 +25,10 @@ const CreateForm: React.FC = () => {
   // upload image
   const [uploadUrl, setUploadUrl] = useState("");
   const handleChange: UploadProps["onChange"] = ({ fileList }) => {
-    if (!fileList || !fileList.length) return;
+    if (!fileList || !fileList.length) {
+      setUploadUrl("");
+      return;
+    }
     const file = fileList[0];
     setLoading(file.status === "uploading");
     if (file.status === "uploading") {
@@ -278,7 +281,7 @@ const CreateForm: React.FC = () => {
         </svg>
         <span className="font-bold">Back</span>
       </button>
-      <div className="w-full max-w-2xl bg-gray-800 p-8 rounded-lg shadow-lg mt-8">
+      <div className="w-full max-w-2xl bg-gray-600 p-8 rounded-lg shadow-lg mt-8">
         {/* Form */}
         <Form layout="vertical">
           <h1 className="text-3xl font-bold text-white mb-8 text-center">
@@ -287,7 +290,7 @@ const CreateForm: React.FC = () => {
 
           {/* Token Image */}
           <div className="mb-6">
-            <label className="block text-sm font-semibold text-gray-400 mb-2">
+            <label className="block text-sm font-semibold text-white mb-2">
               Token Image
             </label>
             <div className="flex justify-center items-center h-40 ">
@@ -308,7 +311,7 @@ const CreateForm: React.FC = () => {
           <div className="grid grid-cols-2 gap-6 mb-6">
             <Form.Item
               label={
-                <label className="block text-sm font-semibold text-gray-400 mb-2">
+                <label className="block text-sm font-semibold text-white mb-2">
                   Token Name
                 </label>
               }
