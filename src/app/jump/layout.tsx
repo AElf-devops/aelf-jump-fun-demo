@@ -26,16 +26,17 @@ export default function Layout({
               token: {
                 colorTextDisabled: "#FFFFFF",
                 colorBgContainerDisabled: "#0e3068",
+                fontFamily: "inherit",
               },
               components: {
                 Table: {
-                  headerBg: "#0e3068",
+                  headerBg: "#000000BF",
                   headerColor: "#FFFFFF",
-                  rowHoverBg: "#21243A",
-                  borderColor: "#272A3A",
-                  colorBgContainer: "#0e3068",
+                  rowHoverBg: "#22252DBF",
+                  borderColor: "#22252DBF",
+                  colorBgContainer: "#000000BF",
                   colorText: "#FFFFFF",
-                  headerSplitColor: "#272A3A",
+                  headerSplitColor: "#22252DBF",
                 },
                 Button: {
                   defaultColor: "#FFFFFF",
@@ -45,7 +46,7 @@ export default function Layout({
             }}
           >
             <Header />
-            <div className="w-full page-container m-auto">{children}</div>
+            <div className="w-full page-container mx-auto">{children}</div>
           </ConfigProvider>
         </WebLoginProvider>
       </AelfdRegistry>

@@ -29,14 +29,14 @@ const Header = () => {
 
   return (
     <header
-      className={`fixed z-50 top-0 left-0 right-0  transition-all duration-300 bg-transparent min-w-[1350px]`}
+      className={`fixed z-50 top-0 left-0 right-0  transition-all duration-300 w-full px-10 border border-black bg-[#03273F] shadow-[2px_2px_0px_0px_#000]`}
     >
-      <div className="flex justify-between items-center w-[1358px] m-auto h-[86px] relative">
+      <div className="flex justify-between items-center  m-auto h-[86px] relative">
         <div
           className="text-4xl font-bold text-white cursor-pointer"
           onClick={() => router.push("/jump")}
         >
-          JUMPFUN
+          jumpfun
         </div>
         <div>
           {/* <button
@@ -55,7 +55,7 @@ const Header = () => {
               }
             }}
           >
-            {walletInfo?.address ? hiddenAddress(walletInfo?.address) : "Login"}
+            {walletInfo?.address ? hiddenAddress(walletInfo?.address) : "login"}
           </button>
         </div>
       </div>

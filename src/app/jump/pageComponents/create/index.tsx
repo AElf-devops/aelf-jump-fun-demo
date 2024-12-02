@@ -35,7 +35,6 @@ const CreateForm: React.FC = () => {
       antdMessage.loading("uploading");
     }
     if (file.status === "done") {
-      console.log(file, "file");
       antdMessage.success(`${file.name || ""} file uploaded successfully.`);
       setUploadUrl(file.response?.url);
     }
@@ -281,7 +280,7 @@ const CreateForm: React.FC = () => {
         </svg>
         <span className="font-bold">Back</span>
       </button>
-      <div className="w-full max-w-2xl bg-gray-600 p-8 rounded-lg shadow-lg mt-8">
+      <div className="w-full max-w-2xl bg-[#000000BF] p-8 rounded-lg shadow-lg mt-8 mb-10">
         {/* Form */}
         <Form layout="vertical">
           <h1 className="text-3xl font-bold text-white mb-8 text-center">
@@ -325,7 +324,7 @@ const CreateForm: React.FC = () => {
             </Form.Item>
             <Form.Item
               label={
-                <label className="block text-sm font-semibold text-gray-400 mb-2">
+                <label className="block text-sm font-semibold text-white mb-2">
                   Seed
                 </label>
               }
@@ -342,21 +341,10 @@ const CreateForm: React.FC = () => {
             </Form.Item>
           </div>
 
-          {/* Description */}
-          {/* <div className="mb-6">
-            <label className="block text-sm font-semibold text-gray-400 mb-2">
-              Description
-            </label>
-            <Input.TextArea
-              placeholder="max: 180 characters"
-              rows={4}
-            ></Input.TextArea>
-          </div> */}
-
           {/* Submit Button */}
           <div className="mb-6">
             <Button
-              className="!w-full !p-3 !h-[54px]"
+              className="!w-full !p-3 !h-[54px] !rounded-full !border !border-black !bg-[#0E8DF5] !shadow-[2px_2px_0_0_#000]"
               disabled={disabled}
               type="primary"
               onClick={createToken}

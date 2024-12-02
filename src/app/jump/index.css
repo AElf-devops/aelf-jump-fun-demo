@@ -1,21 +1,39 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@font-face {
+  font-family: "Nunito";
+  src: url("/fonts/Nunito-Regular.ttf") format("truetype");
+  font-weight: 400; /* Regular */
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Nunito";
+  src: url("/fonts/Nunito-Bold.ttf") format("truetype");
+  font-weight: 700; /* Bold */
+  font-style: normal;
+}
+
 @layer base {
   body {
     @apply !bg-[url('https://jump-static.pages.dev/image/asset/web-bg.svg')] bg-top bg-no-repeat !bg-[#0e0c15] text-white m-0 p-0;
   }
 }
+body,
+.ant-table {
+  font-family: "Nunito", sans-serif !important;
+}
 
 @layer components {
   .page-container {
-    background-image: url("https://png.pngtree.com/background/20210709/original/pngtree-blue-starry-background-picture-image_932697.jpg");
+    background-image: url("/images/jump/background.png");
     background-repeat: repeat;
-    background-position:
-      center top,
-      center bottom;
-    height: 100vh;
-    padding: 150px 0;
+    background-size: cover;
+    min-height: 100vh;
+    padding-top: 150px;
+    margin-bottom: 30px;
+    @apply bg-opacity-30;
   }
 
   .home {
@@ -23,6 +41,6 @@
   }
 
   .home-create-btn {
-    @apply border border-[#028dfa] bg-gradient-to-b from-[#028dfa00] to-[#0e3068] text-white;
+    @apply rounded-full border border-black bg-white shadow-[2px_2px_0px_0px_#000];
   }
 }

@@ -1,11 +1,20 @@
 import { withSentryConfig } from "@sentry/nextjs";
+import withLess from "next-with-less";
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig = withLess({
   output: "standalone",
   images: {
     domains: ["forest-testnet.s3.ap-northeast-1.amazonaws.com"],
   },
-};
+  lessLoaderOptions: {
+    lessOptions: {
+      modifyVars: {
+        "font-family": "'Nunito', sans-serif",
+      },
+      javascriptEnabled: true,
+    },
+  },
+});
 
 export default withSentryConfig(nextConfig, {
   // For all available options, see:

@@ -86,15 +86,21 @@ export default function JumpFun() {
     <div className="home flex align-middle justify-center flex-col">
       <div className="home-banner p-t-[190px] flex items-center relative flex-col w-[1200px] my-20 m-auto">
         <button
-          className="home-create-btn rounded-md w-[340px] h-[64px] p-[0 56px] text-[22px]"
+          className="home-create-btn w-[340px] h-[64px] p-[0 56px] text-[22px] flex items-center justify-center font-bold"
           onClick={() => onGotoCreate()}
         >
-          Create
+          <Image
+            src="/images/jump/plus.svg"
+            width={48}
+            height={48}
+            alt="plus"
+          ></Image>{" "}
+          create token
         </button>
       </div>
       <div className="w-[1200px] m-auto">
         <h2 className="text-[32px] font-bold text-white mb-5">
-          Create History
+          create history
         </h2>
         <Table
           columns={columns}
