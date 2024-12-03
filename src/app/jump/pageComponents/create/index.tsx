@@ -136,7 +136,7 @@ const CreateForm: React.FC = () => {
   const [tokenName, setTokenName] = useState<string>("");
   const handleTokenNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
-    setTokenName(inputValue);
+    setTokenName(inputValue.trim());
   };
 
   // symbol
