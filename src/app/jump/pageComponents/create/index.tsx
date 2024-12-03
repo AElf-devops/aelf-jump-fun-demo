@@ -179,7 +179,7 @@ const CreateForm: React.FC = () => {
 
     if (inputValue && !regex.test(inputValue)) {
       setError(
-        "The maximum length of token symbol supported is 10. Please search for a shorter symbol."
+        "The maximum length of token symbol supported is 10. Please search for a shorter symbol, all in uppercase letters."
       );
       setSymbol(inputValue.slice(0, inputValue.length - 1));
       inputValue.slice(0, inputValue.length - 1) !== symbol &&
