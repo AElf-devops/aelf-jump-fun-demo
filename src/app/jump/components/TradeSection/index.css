@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+.trade-section .ant-tabs .ant-tabs-nav-list {
+  @apply p-2 w-full;
+}
+.trade-section .ant-tabs .ant-tabs-nav-wrap {
+  @apply h-[62px];
+}
+.trade-section .ant-tabs-nav-operations {
+  @apply !hidden;
+}
+.trade-section .ant-tabs .ant-tabs-tab {
+  @apply p-0 !m-0;
+}
+.trade-section .ant-tabs .ant-tabs-ink-bar {
+  @apply hidden;
+}
+.trade-section .ant-tabs-nav::before {
+  @apply !border-b-0;
+}
+.trade-section
+  .ant-tabs
+  .ant-btn-variant-outlined:not(:disabled):not(.ant-btn-disabled):active {
+  @apply text-white;
+}

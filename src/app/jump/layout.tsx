@@ -39,7 +39,11 @@ export default function Layout({
                 },
                 Button: {
                   defaultColor: "#FFFFFF",
+                  defaultHoverColor: "#FFFFFF",
                   defaultBg: "#0f4984",
+                  defaultBorderColor: "transparent",
+                  defaultHoverBorderColor: "transparent",
+                  defaultActiveColor: "transaprent",
                 },
               },
             }}
