@@ -131,7 +131,7 @@ const TransactionTabs: React.FC = () => {
       </div>
 
       <div className="mb-4">
-        <div className="text-sm text-gray-600">
+        <div className="text-sm text-[#DBE3E6]">
           {amount
             ? `You will receive ~${calculatedToken.toFixed(2)} $Token`
             : ""}

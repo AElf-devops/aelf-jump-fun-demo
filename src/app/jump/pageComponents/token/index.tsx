@@ -36,61 +36,17 @@ const App = () => {
   const [elfAmount, setElfAmount] = useState("0");
 
   return (
-    <Layout className="min-h-screen ">
-      <Header className="bg-blue-500 text-white text-center py-4">
-        <Title level={3} className="text-white">
-          MemeCat Market
-        </Title>
-      </Header>
+    <div className="min-h-screen bg-[#000000C0]  ">
+      <header className="text-center py-4">
+        <div className="text-white">Token Market</div>
+      </header>
 
-      <Content className="py-8">
-        <div className="container mx-auto px-4">
-          <Row gutter={16}>
-            {/* Chart Section */}
-            {/* <Col span={12}>
-              <Card title="MemeCat Price Chart">
-                <Line data={chartData} />
-              </Card>
-            </Col> */}
-
-            {/* Trade Section */}
-            <Col span={24}>
-              <Card title="Trade MemeCat">
-                <TradeSection></TradeSection>
-              </Card>
-            </Col>
-          </Row>
-
-          {/* <Row gutter={16} className="mt-8">
-            
-            <Col span={12}>
-              <Card title="Chat">
-                <div className="h-48 overflow-y-auto border p-2 mb-4">
-                  <div className="text-sm">
-                    LFGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG!
-                  </div>
-                  <div className="text-sm">
-                    Hold tight, the price is going up!
-                  </div>
-                </div>
-                <Input placeholder="Send a message" />
-              </Card>
-            </Col>
-
-           
-            <Col span={12}>
-              <Card title="Holders Distribution">
-                <div>
-                  <div className="text-lg">Account 1: 24.3%</div>
-                  <div className="text-lg">Account 2: 24.3%</div>
-                  <div className="text-lg">Account 3: 24.3%</div>
-                </div>
-              </Card>
-            </Col>
-          </Row> */}
+      <Content className="py-8 flex justify-center items-center">
+        <div className="mx-auto px-4">
+          <TradeSection></TradeSection>
         </div>
       </Content>
-    </Layout>
+    </div>
   );
 };
 

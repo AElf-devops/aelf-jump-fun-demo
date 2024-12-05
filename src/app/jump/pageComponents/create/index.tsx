@@ -126,7 +126,6 @@ const CreateForm: React.FC = () => {
   useEffect(() => {
     const getInfo = async () => {
       const decimalRes = await getDecimal();
-      console.log(decimalRes, "decimalRes");
       setDecimal((decimalRes as DataResponse<TokenInfoData>)?.data?.decimals);
     };
     getInfo();
@@ -194,6 +193,29 @@ const CreateForm: React.FC = () => {
     if (regex.test(symbol)) {
       setError("");
     }
+  };
+
+  const { TextArea } = Input;
+  const [description, setDescription] = useState("");
+  const handleDescriptionChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const inputValue = e.target.value;
+    setDescription(inputValue.trim());
+  };
+
+  const [links, setLinks] = useState({
+    website: "",
+    telegram: "",
+    x: "",
+    youtube: "",
+  });
+
+  const handleLinkChange = (key: string, value: string) => {
+    setLinks(prevLinks => ({
+      ...prevLinks,
+      [key]: value.trim(),
+    }));
   };
 
   // button
@@ -340,7 +362,82 @@ const CreateForm: React.FC = () => {
               />
             </Form.Item>
           </div>
+          <Form.Item
+            label={
+              <label className="block text-sm font-semibold text-white mb-2">
+                Description
+              </label>
+            }
+          >
+            <TextArea
+              type="text"
+              value={description}
+              onChange={handleDescriptionChange}
+            />
+          </Form.Item>
+          {/* Website Link */}
+          <Form.Item
+            label={
+              <label className="block text-sm font-semibold text-white mb-2">
+                Website Link
+              </label>
+            }
+          >
+            <Input
+              type="text"
+              value={links.website}
+              placeholder="optional"
+              onChange={e => handleLinkChange("website", e.target.value)}
+            />
+          </Form.Item>
 
+          {/* Telegram Link */}
+          <Form.Item
+            label={
+              <label className="block text-sm font-semibold text-white mb-2">
+                Telegram Link
+              </label>
+            }
+          >
+            <Input
+              type="text"
+              value={links.telegram}
+              placeholder="optional"
+              onChange={e => handleLinkChange("telegram", e.target.value)}
+            />
+          </Form.Item>
+
+          {/* X Link */}
+          <Form.Item
+            label={
+              <label className="block text-sm font-semibold text-white mb-2">
+                X Link
+              </label>
+            }
+          >
+            <Input
+              type="text"
+              value={links.x}
+              placeholder="optional"
+              onChange={e => handleLinkChange("x", e.target.value)}
+            />
+          </Form.Item>
+
+          {/* YouTube Link */}
+          <Form.Item
+            label={
+              <label className="block text-sm font-semibold text-white mb-2">
+                YouTube Link
+              </label>
+            }
+          >
+            <Input
+              type="text"
+              value={links.youtube}
+              placeholder="optional"
+              onChange={e => handleLinkChange("youtube", e.target.value)}
+            />
+          </Form.Item>
           {/* Submit Button */}
           <div className="mb-6">
             <Button

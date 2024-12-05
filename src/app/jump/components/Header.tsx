@@ -29,18 +29,18 @@ const Header = () => {
 
   return (
     <header
-      className={`fixed z-50 top-0 left-0 right-0  transition-all duration-300 w-full px-10 border border-black bg-[#03273F] shadow-[2px_2px_0px_0px_#000]`}
+      className={`fixed z-50 top-0 left-0 right-0 transition-all duration-300 w-full px-10 border border-black bg-[#03273F] shadow-[2px_2px_0px_0px_#000] h-[64px]`}
     >
-      <div className="flex justify-between items-center  m-auto h-[86px] relative">
+      <div className="flex justify-between items-center  m-auto relative h-full">
         <div className="flex flex-row">
           <div
-            className="text-4xl font-bold text-white cursor-pointer"
+            className="text-[24px] font-bold text-white cursor-pointer flex items-center"
             onClick={() => router.push("/jump")}
           >
-            jumpfun
+            Anna
           </div>
           {/* Username Card with shaking animation */}
-          <div className="p-4 bg-gray-800 flex items-center space-x-4 animate-shake ml-10">
+          <div className="p-4 bg-gray-800 flex items-center space-x-4 animate-shake ml-10 h-[50px]">
             <div
               className="w-48 h-12 bg-purple-500 rounded-lg flex items-center justify-center text-sm font-bold text-white shadow-lg"
               style={{ animation: "shake 1.5s infinite" }}
