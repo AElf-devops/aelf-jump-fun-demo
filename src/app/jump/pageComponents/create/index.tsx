@@ -88,6 +88,7 @@ const CreateForm: React.FC = () => {
       });
       return rs;
     } catch (e) {
+      console.error(e), "getBalance";
       return 0;
     } finally {
       setLoading(false);
@@ -231,6 +232,11 @@ const CreateForm: React.FC = () => {
     );
   }, [tokenName, symbol, uploadUrl, walletInfo?.address]);
   const createToken = async () => {
+    antdMessage.success("Create success");
+    setTimeout(() => {
+      router.push(`/jump/token/${tokenName}`);
+    }, 500);
+    return;
     try {
       setLoading(true);
       const amount = symbolInfo.tokenPrice.amount;

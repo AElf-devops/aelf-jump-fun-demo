@@ -32,9 +32,7 @@ const chartData = {
   ],
 };
 
-const App = () => {
-  const [elfAmount, setElfAmount] = useState("0");
-
+const App = ({ id }: { id: string }) => {
   return (
     <div className="min-h-screen bg-[#000000C0]  ">
       <header className="text-center py-4">
@@ -43,7 +41,7 @@ const App = () => {
 
       <Content className="py-8 flex justify-center items-center">
         <div className="mx-auto px-4">
-          <TradeSection></TradeSection>
+          <TradeSection token={id}></TradeSection>
         </div>
       </Content>
     </div>

@@ -3,15 +3,28 @@ import { Button, Input, Tabs, message } from "antd";
 import { CheckCircleOutlined } from "@ant-design/icons";
 import "./index.css";
 import Image from "next/image";
+import { JUMP_FUN_CONFIG } from "../../configOnline";
+import { useConnectWallet } from "@aelf-web-login/wallet-adapter-react";
+import useBalance from "../../hook/balance";
 const { TabPane } = Tabs;
 
-const TransactionTabs: React.FC = () => {
+const TransactionTabs: React.FC<{ token: string }> = ({
+  token,
+}: {
+  token: string;
+}) => {
+  const symbol = JUMP_FUN_CONFIG.SYMBOL;
+  const { walletInfo, callViewMethod } = useConnectWallet();
+  const { balanceData } = useBalance({
+    callViewMethod,
+    walletInfo,
+  });
+  console.log(balanceData, "balanceData");
   const [activeTab, setActiveTab] = useState<string>("buy");
   const [amount, setAmount] = useState<string>("");
   const [userBalance, setUserBalance] = useState<number>(1000);
   const [tokenPrice, setTokenPrice] = useState<number>(2);
   const [calculatedToken, setCalculatedToken] = useState<number>(0);
-
   const handleTabChange = (key: string) => {
     setActiveTab(key);
   };
@@ -46,7 +59,7 @@ const TransactionTabs: React.FC = () => {
       return;
     }
     message.success(
-      `${activeTab === "buy" ? "Buying" : "Selling"} ${amount} ELF`
+      `${activeTab === "buy" ? "Buying" : "Selling"} ${amount} ${symbol}`
     );
   };
 
@@ -79,7 +92,7 @@ const TransactionTabs: React.FC = () => {
 
       <div className="text-center mb-4 flex">
         <div className="rounded-lg text-[#40B11A] bg-[#F5F9ED] px-2 py-1 h-[28px] text-[15px] font-bold flex items-center justify-center w-auto m-auto">
-          balance: {userBalance} ELF
+          balance: {userBalance} {symbol}
         </div>
       </div>
 
@@ -92,7 +105,7 @@ const TransactionTabs: React.FC = () => {
         min={0}
         suffix={
           <div className="flex items-center space-x-2 ml-2">
-            <span className="text-[20px] font-bold text-black">ELF</span>
+            <span className="text-[20px] font-bold text-black">{symbol}</span>
             <Image
               src="/images/jump/token-logo.svg"
               width={38}
@@ -114,26 +127,26 @@ const TransactionTabs: React.FC = () => {
           onClick={() => handlePresetAmount(0.1)}
           className="h-[28px] !text-[#40B11A] text-[12px] !font-bold !bg-[#F5F9ED] mr-[6px] !rounded-[8px]"
         >
-          0.1 ELF
+          0.1 {symbol}
         </Button>
         <Button
           onClick={() => handlePresetAmount(0.5)}
           className="h-[28px] !text-[#40B11A] text-[12px] !font-bold !bg-[#F5F9ED] mr-[6px] !rounded-[8px]"
         >
-          0.5 ELF
+          0.5 {symbol}
         </Button>
         <Button
           onClick={() => handlePresetAmount(1)}
           className="h-[28px] !text-[#40B11A] text-[12px] !font-bold !bg-[#F5F9ED] "
         >
-          1 ELF
+          1 {symbol}
         </Button>
       </div>
 
       <div className="mb-4">
         <div className="text-sm text-[#DBE3E6]">
           {amount
-            ? `You will receive ~${calculatedToken.toFixed(2)} $Token`
+            ? `You will receive ~${calculatedToken.toFixed(2)} ${token}`
             : ""}
         </div>
       </div>
@@ -142,7 +155,7 @@ const TransactionTabs: React.FC = () => {
         className="flex !w-full !h-[56px] !py-[19px] flex-col justify-center items-center !rounded-full border border-black !bg-[#40B11A] shadow-[2px_2px_0px_0px_#000] text-white !font-bold !text-[16px]"
         onClick={handleConfirm}
       >
-        {activeTab} Token
+        {activeTab} {token}
       </Button>
     </div>
   );
