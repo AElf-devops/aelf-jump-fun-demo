@@ -3,7 +3,7 @@ import { Button, Input, Tabs, message } from "antd";
 import { CheckCircleOutlined } from "@ant-design/icons";
 import "./index.css";
 import Image from "next/image";
-import { JUMP_FUN_CONFIG } from "../../configOnline";
+import { CONTRACT_ADDRESS, JUMP_FUN_CONFIG } from "../../configOnline";
 import { useConnectWallet } from "@aelf-web-login/wallet-adapter-react";
 import useBalance from "../../hook/balance";
 const { TabPane } = Tabs;
@@ -14,7 +14,7 @@ const TransactionTabs: React.FC<{ token: string }> = ({
   token: string;
 }) => {
   const symbol = JUMP_FUN_CONFIG.SYMBOL;
-  const { walletInfo, callViewMethod } = useConnectWallet();
+  const { walletInfo, callViewMethod, callSendMethod } = useConnectWallet();
   const { balanceData } = useBalance({
     callViewMethod,
     walletInfo,
@@ -58,9 +58,39 @@ const TransactionTabs: React.FC<{ token: string }> = ({
       message.error("Insufficient balance");
       return;
     }
-    message.success(
-      `${activeTab === "buy" ? "Buying" : "Selling"} ${amount} ${symbol}`
-    );
+
+    if (!parseFloat(amount)) {
+      message.error("Invalid amount");
+      return;
+    }
+
+    let args: object = {
+      amount: parseInt(amount),
+      ticker: token,
+    }
+
+    if (activeTab === "buy") {
+      args = {...args, payLimit: 0}
+    }
+    else {
+      args = {...args, receiveLimit: 0}
+    }
+
+    console.log(args, "---args");
+
+    callSendMethod({
+      contractAddress: CONTRACT_ADDRESS.BUYSELL,
+      methodName: activeTab === "buy" ? "Buy" : "Sell",
+      args,
+    }).then((res) => {
+      console.log(res);
+
+      message.success(
+        `${activeTab === "buy" ? "Buying" : "Selling"} ${amount} ${symbol}`
+      );
+    });
+
+    
   };
 
   return (
