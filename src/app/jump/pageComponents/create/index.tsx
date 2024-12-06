@@ -14,6 +14,7 @@ import { formatTokenAmount } from "../../utils/addressFormat";
 import debounce from "lodash.debounce";
 import { fetcher } from "../../utils/fetcher";
 import BigNumber from "bignumber.js";
+import { useFormData } from "../../context/FormDataContext";
 
 const CreateForm: React.FC = () => {
   const router = useRouter();
@@ -231,59 +232,17 @@ const CreateForm: React.FC = () => {
       )
     );
   }, [tokenName, symbol, uploadUrl, walletInfo?.address]);
+  const { setFormData } = useFormData();
   const createToken = async () => {
-    antdMessage.success("Create success");
-    setTimeout(() => {
-      router.push(`/jump/token/${tokenName}`);
-    }, 500);
-    return;
-    try {
-      setLoading(true);
-      const amount = symbolInfo.tokenPrice.amount;
-      // approve
-      const approveRs: any = await callSendMethod({
-        chainId: JUMP_FUN_CONFIG.CHAIN_ID,
-        contractAddress: CONTRACT_ADDRESS.TOKEN,
-        methodName: "Approve",
-        args: {
-          symbol: JUMP_FUN_CONFIG.SYMBOL,
-          spender: CONTRACT_ADDRESS.JUMPFUN,
-          amount: new BigNumber(amount)
-            .times(new BigNumber(10).pow(decimal))
-            .toString(),
-        },
-      });
-
-      if (!approveRs.error && approveRs.data.Status === "MINED") {
-        await callSendMethod({
-          chainId: JUMP_FUN_CONFIG.CHAIN_ID,
-          contractAddress: CONTRACT_ADDRESS.JUMPFUN,
-          methodName: "Create",
-          args: {
-            symbol,
-            tokenName: tokenName,
-            imageUri: uploadUrl,
-            cost: new BigNumber(amount)
-              .times(new BigNumber(10).pow(decimal))
-              .toString(),
-          },
-        });
-        antdMessage.success("Create success");
-        setTimeout(() => {
-          router.push("/jump");
-        }, 500);
-      } else {
-        throw new Error("Approve failed");
-      }
-    } catch (e: unknown) {
-      if (e instanceof Error) {
-        antdMessage.error(e.message);
-      } else {
-        antdMessage.error("Unknown error");
-      }
-    } finally {
-      setLoading(false);
-    }
+    const amount = symbolInfo.tokenPrice.amount;
+    setFormData({
+      amount,
+      tokenName,
+      uploadUrl,
+      decimal,
+      symbol,
+    });
+    router.push("/jump/confirm");
   };
 
   return (

@@ -11,6 +11,7 @@ import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { AelfdRegistry } from "@aelf-design/nextjs-registry";
 import { ConfigProvider } from "antd";
 import "./index.css";
+import { FormDataProvider } from "./context/FormDataContext";
 
 export default function Layout({
   children, // will be a page or nested layout
@@ -49,7 +50,9 @@ export default function Layout({
             }}
           >
             <Header />
-            <div className="w-full page-container mx-auto">{children}</div>
+            <div className="w-full page-container mx-auto">
+              <FormDataProvider>{children}</FormDataProvider>
+            </div>
           </ConfigProvider>
         </WebLoginProvider>
       </AelfdRegistry>
