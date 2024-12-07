@@ -18,7 +18,7 @@ const useBalance = ({
       return new BigNumber(0);
     }
 
-    const rs = await callViewMethod({
+    const rs: {data: {balance: string}} | null = await callViewMethod({
       chainId: JUMP_FUN_CONFIG.CHAIN_ID,
       contractAddress: CONTRACT_ADDRESS.TOKEN,
       methodName: "GetBalance",
@@ -27,7 +27,7 @@ const useBalance = ({
         owner: walletInfo.address,
       },
     });
-    return new BigNumber(rs.data.balance).dividedBy(10 ** JUMP_FUN_CONFIG.DECIMAL);
+    return new BigNumber(rs?.data.balance || 0).dividedBy(10 ** JUMP_FUN_CONFIG.DECIMAL);
   })
 };
 

@@ -21,7 +21,7 @@ const useTokenInfo = ({
         symbol,
       },
     });
-    return rs.data;
+    return (rs as any).data;
   })
 };
 

@@ -32,7 +32,7 @@ const useTokenPrice = ({
       },
     });
 
-    return new BigNumber(rs.data.value).dividedBy(10 ** JUMP_FUN_CONFIG.DECIMAL);
+    return new BigNumber((rs as any).data.value).dividedBy(10 ** JUMP_FUN_CONFIG.DECIMAL);
   })
 };
 
