@@ -5,8 +5,14 @@ import "./index.css";
 import Image from "next/image";
 import { CONTRACT_ADDRESS, JUMP_FUN_CONFIG } from "../../configOnline";
 import { useConnectWallet } from "@aelf-web-login/wallet-adapter-react";
-import useBalance from "../../hook/balance";
+import useBalance from "../../hook/balance-new";
+import BigNumber from "bignumber.js";
+import useTokenPrice from "../../hook/token-price";
+import useTokenInfo from "../../hook/token-info";
 const { TabPane } = Tabs;
+
+const DECIMAL = JUMP_FUN_CONFIG.DECIMAL;
+const MULTIPLIER = 10 ** DECIMAL;
 
 const TransactionTabs: React.FC<{ token: string }> = ({
   token,
@@ -14,83 +20,73 @@ const TransactionTabs: React.FC<{ token: string }> = ({
   token: string;
 }) => {
   const symbol = JUMP_FUN_CONFIG.SYMBOL;
-  const { walletInfo, callViewMethod, callSendMethod } = useConnectWallet();
-  const { balanceData } = useBalance({
-    callViewMethod,
-    walletInfo,
-  });
-  console.log(balanceData, "balanceData");
-  const [activeTab, setActiveTab] = useState<string>("buy");
+  const [activeTab, setActiveTab] = useState<"buy" | "sell">("buy");
+  const currentSymbol = activeTab === "buy" ? "ELF" : token;
+  const { callSendMethod } = useConnectWallet();
+  const { data: userBalance } = useBalance({ symbol: currentSymbol });
   const [amount, setAmount] = useState<string>("");
-  const [userBalance, setUserBalance] = useState<number>(1000);
-  const [tokenPrice, setTokenPrice] = useState<number>(2);
-  const [calculatedToken, setCalculatedToken] = useState<number>(0);
+  const {data: tokenPrice} = useTokenPrice({ ticker: token, type: activeTab, amount });
+  const {data: tokenInfo} = useTokenInfo({ symbol: token });
   const handleTabChange = (key: string) => {
-    setActiveTab(key);
+    setActiveTab(key as "buy" | "sell");
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setAmount(value);
-    if (value) {
-      setCalculatedToken(parseFloat(value) * tokenPrice);
-    } else {
-      setCalculatedToken(0);
-    }
   };
 
   const handlePresetAmount = (value: number) => {
-    if (value > userBalance) {
+    if (!userBalance) return;
+
+    if (userBalance.lt(value)) {
       message.error("Insufficient balance");
       return;
     }
     setAmount(value.toString());
-    setCalculatedToken(value * tokenPrice);
   };
 
   const handleReset = () => {
     setAmount("");
-    setCalculatedToken(0);
   };
 
-  const handleConfirm = () => {
-    if (parseFloat(amount) > userBalance) {
+  const handleConfirm = async () => {
+    if (!userBalance) return;
+
+    if (userBalance.lt(amount || "0")) {
       message.error("Insufficient balance");
       return;
     }
 
-    if (!parseFloat(amount)) {
-      message.error("Invalid amount");
-      return;
-    }
+    const _amount = new BigNumber(amount).multipliedBy(MULTIPLIER).toString(10);
 
-    let args: object = {
-      amount: parseInt(amount),
-      ticker: token,
-    }
-
-    if (activeTab === "buy") {
-      args = {...args, payLimit: 0}
-    }
-    else {
-      args = {...args, receiveLimit: 0}
-    }
-
-    console.log(args, "---args");
-
-    callSendMethod({
-      contractAddress: CONTRACT_ADDRESS.BUYSELL,
-      methodName: activeTab === "buy" ? "Buy" : "Sell",
-      args,
-    }).then((res) => {
-      console.log(res);
-
-      message.success(
-        `${activeTab === "buy" ? "Buying" : "Selling"} ${amount} ${symbol}`
-      );
+    await callSendMethod({
+      contractAddress: CONTRACT_ADDRESS.TOKEN_TDVW,
+      methodName: "Approve",
+      chainId: 'tDVW',
+      args: {
+        spender: CONTRACT_ADDRESS.BUYSELL,
+        amount: _amount,
+        symbol: JUMP_FUN_CONFIG.SYMBOL,
+      },
     });
 
-    
+    let args: object = {
+      amount: _amount,
+      ticker: token,
+      receiveLimit: 1,
+    }
+
+    await callSendMethod({
+      contractAddress: CONTRACT_ADDRESS.BUYSELL,
+      methodName: activeTab === "buy" ? "Buy" : "Sell",
+      chainId: 'tDVW',
+      args,
+    });
+
+    message.success(
+      `${activeTab === "buy" ? "Buying" : "Selling"} ${amount} ${symbol}`
+    );
   };
 
   return (
@@ -122,7 +118,7 @@ const TransactionTabs: React.FC<{ token: string }> = ({
 
       <div className="text-center mb-4 flex">
         <div className="rounded-lg text-[#40B11A] bg-[#F5F9ED] px-2 py-1 h-[28px] text-[15px] font-bold flex items-center justify-center w-auto m-auto">
-          balance: {userBalance} {symbol}
+          balance: {userBalance?.toFixed(2)} {currentSymbol}
         </div>
       </div>
 
@@ -135,7 +131,7 @@ const TransactionTabs: React.FC<{ token: string }> = ({
         min={0}
         suffix={
           <div className="flex items-center space-x-2 ml-2">
-            <span className="text-[20px] font-bold text-black">{symbol}</span>
+            <span className="text-[20px] font-bold text-black">{currentSymbol}</span>
             <Image
               src="/images/jump/token-logo.svg"
               width={38}
@@ -157,33 +153,34 @@ const TransactionTabs: React.FC<{ token: string }> = ({
           onClick={() => handlePresetAmount(0.1)}
           className="h-[28px] !text-[#40B11A] text-[12px] !font-bold !bg-[#F5F9ED] mr-[6px] !rounded-[8px]"
         >
-          0.1 {symbol}
+          0.1 {currentSymbol}
         </Button>
         <Button
           onClick={() => handlePresetAmount(0.5)}
           className="h-[28px] !text-[#40B11A] text-[12px] !font-bold !bg-[#F5F9ED] mr-[6px] !rounded-[8px]"
         >
-          0.5 {symbol}
+          0.5 {currentSymbol}
         </Button>
         <Button
           onClick={() => handlePresetAmount(1)}
           className="h-[28px] !text-[#40B11A] text-[12px] !font-bold !bg-[#F5F9ED] "
         >
-          1 {symbol}
+          1 {currentSymbol}
         </Button>
       </div>
 
       <div className="mb-4">
         <div className="text-sm text-[#DBE3E6]">
           {amount
-            ? `You will receive ~${calculatedToken.toFixed(2)} ${token}`
+            ? `You will receive ~${tokenPrice || 0} ${currentSymbol === "ELF" ? token : "ELF"}`
             : ""}
         </div>
       </div>
 
       <Button
-        className="flex !w-full !h-[56px] !py-[19px] flex-col justify-center items-center !rounded-full border border-black !bg-[#40B11A] shadow-[2px_2px_0px_0px_#000] text-white !font-bold !text-[16px]"
+        className="flex !w-full !h-[56px] !py-[19px] flex-col justify-center items-center !rounded-full border border-black !bg-[#40B11A] shadow-[2px_2px_0px_0px_#000] text-white !font-bold !text-[16px] disabled:opacity-40"
         onClick={handleConfirm}
+        disabled={!amount}
       >
         {activeTab} {token}
       </Button>
