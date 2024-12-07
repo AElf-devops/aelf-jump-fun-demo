@@ -11,11 +11,15 @@ import BigNumber from "bignumber.js";
 import { useBalance } from "../../hook/balance";
 import { formatTokenAmount } from "../../utils/addressFormat";
 import { DataResponse, TokenItem, TokenList } from "../../types";
-import { validateTokenInfoExists } from "../../utils/contract";
+import {
+  crossChainCreateToken,
+  validateTokenInfoExists,
+} from "../../utils/contract";
 import {
   convertTokenInfoToValidateInput,
   ValidateTokenInfoExistsInput,
 } from "../../utils/convert";
+import { ProgressBar } from "../../components/Progress";
 function generateRandomString() {
   return Array.from({ length: 10 }, () =>
     String.fromCharCode(65 + Math.floor(Math.random() * 26))
@@ -43,14 +47,16 @@ const BuyTokenCard = () => {
   //   uploadUrl:
   //     "https://forest-testnet.s3.ap-northeast-1.amazonaws.com/1733540407094-checkbox-Checked.svg",
   //   decimal: 8,
-  //   symbol: FAKE_SYMBOL,
+  //   symbol: "UKGVNIVTEF",
   //   desc: "xxxx",
   //   socialMedia: [
   //     "https://forest-testnet.s3.ap-northeast-1.amazonaws.com/1733540407094-checkbox-Checked.svg",
   //   ],
   // };
+  const [progress, setProgeress] = useState(0);
   const launch = async () => {
     try {
+      setProgeress(0);
       setLoading(true);
       // approve
       const approveRs: any = await callSendMethod({
@@ -95,19 +101,37 @@ const BuyTokenCard = () => {
               symbol,
             },
           });
-        console.log(tokenInfos, "tokenInfos");
+
         const tokenInfo = tokenInfos.data;
+        console.log(JSON.stringify(tokenInfo), "tokenInfo");
         if (!tokenInfo) {
           throw new Error("Token info not found");
         }
-        console.log(
-          JSON.stringify(convertTokenInfoToValidateInput(tokenInfo)),
-          "tokenInfo"
-        );
+        // const tokenInfo = {
+        //   symbol: "MSSQXKWOBF",
+        //   tokenName: "abigail1",
+        //   supply: 0,
+        //   totalSupply: "100000000000000000",
+        //   decimals: 8,
+        //   issuer: "24KQB2iGmi9cRh6E1BGsAQfzqLkbzLyc2rkwZUxmP4vDChe5fv",
+        //   isBurnable: true,
+        //   issueChainId: 1931928,
+        //   issued: 0,
+        //   externalInfo: {
+        //     __ft_image_uri:
+        //       "https://forest-testnet.s3.ap-northeast-1.amazonaws.com/1733540407094-checkbox-Checked.svg",
+        //     __ft_ticker: "MSSQXKWOBF",
+        //   },
+        //   owner: "24KQB2iGmi9cRh6E1BGsAQfzqLkbzLyc2rkwZUxmP4vDChe5fv",
+        // };
         // validate token info
-        const txId = await validateTokenInfoExists(
-          convertTokenInfoToValidateInput(tokenInfo)
+        const { txTd, txRes, signedTx } = await validateTokenInfoExists(
+          // tokenInfo,
+          convertTokenInfoToValidateInput(tokenInfo),
+          setProgeress
         );
+        console.log(txTd, txRes, signedTx, "validateTokenInfoExists");
+        await crossChainCreateToken(txTd, signedTx, setProgeress);
         antdMessage.success("Create success");
         // setTimeout(() => {
         //   router.push("/jump");
@@ -127,14 +151,14 @@ const BuyTokenCard = () => {
     }
   };
   return (
-    <div className="flex justify-center items-center min-h-screen bg-transparent ">
+    <div className="flex justify-center items-center min-h-screen bg-transparent relative">
       {/* Card Container */}
       <div className=" w-[473px] h-[811px] text-white shadow-lg px-[48px] py-[34px] rounded-[8px] bg-[#000000bf]">
         {/* Go Back Button */}
         <div className="mb-4 flex justify-center items-center ">
           <GoBack handleBack={handleBack}></GoBack>
         </div>
-
+        {(loading || !!progress) && <ProgressBar progress={20}></ProgressBar>}
         {/* Header */}
         <div className="text-center mb-4">
           <h2 className="text-[24px] font-bold text-white flex justify-center items-center">
