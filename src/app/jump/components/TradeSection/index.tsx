@@ -172,7 +172,7 @@ const TransactionTabs: React.FC<{ token: string }> = ({
       <div className="mb-4">
         <div className="text-sm text-[#DBE3E6]">
           {amount
-            ? `You will receive ~${tokenPrice || 0} ${currentSymbol === "ELF" ? token : "ELF"}`
+            ? `You will receive ${tokenPrice || 0} ${currentSymbol === "ELF" ? token : "ELF"}`
             : ""}
         </div>
       </div>
