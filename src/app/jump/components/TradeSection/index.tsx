@@ -26,7 +26,7 @@ const TransactionTabs: React.FC<{ token: string }> = ({
   const { data: userBalance } = useBalance({ symbol: currentSymbol });
   const [amount, setAmount] = useState<string>("");
   const {data: tokenPrice} = useTokenPrice({ ticker: token, type: activeTab, amount });
-  const {data: tokenInfo} = useTokenInfo({ symbol: token });
+  const {data: tokenInfo} = useTokenInfo({ symbol: currentSymbol });
   const handleTabChange = (key: string) => {
     setActiveTab(key as "buy" | "sell");
   };
@@ -133,7 +133,7 @@ const TransactionTabs: React.FC<{ token: string }> = ({
           <div className="flex items-center space-x-2 ml-2">
             <span className="text-[20px] font-bold text-black">{currentSymbol}</span>
             <Image
-              src="/images/jump/token-logo.svg"
+              src={tokenInfo?.externalInfo?.value.__ft_image_uri || "/images/jump/token-logo.svg"}
               width={38}
               height={38}
               alt="token-logo"
