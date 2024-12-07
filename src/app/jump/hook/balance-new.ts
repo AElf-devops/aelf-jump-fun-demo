@@ -19,8 +19,8 @@ const useBalance = ({
     }
 
     const rs: {data: {balance: string}} | null = await callViewMethod({
-      chainId: JUMP_FUN_CONFIG.CHAIN_ID,
-      contractAddress: CONTRACT_ADDRESS.TOKEN,
+      chainId: "tDVW",
+      contractAddress: CONTRACT_ADDRESS.TOKEN_TDVW,
       methodName: "GetBalance",
       args: {
         symbol,
