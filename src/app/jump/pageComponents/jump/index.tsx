@@ -18,15 +18,15 @@ export default function JumpFun() {
 
   const columns = [
     {
-      title: "Symbol",
-      dataIndex: "symbol",
-      key: "symbol",
+      title: "Ticker",
+      dataIndex: "ticker",
+      key: "ticker",
       render: (text: any) => <span>{text}</span>,
     },
     {
-      title: "Cost",
-      dataIndex: "cost",
-      key: "cost",
+      title: "SeedFee",
+      dataIndex: "seedFee",
+      key: "seedFee",
       render: (text: any, record: any) => {
         const decimal = record.decimals;
         const amount = formatTokenAmount(text || "", decimal);
@@ -35,8 +35,8 @@ export default function JumpFun() {
     },
     {
       title: "TokenName",
-      dataIndex: "tokenName",
-      key: "tokenName",
+      dataIndex: "name",
+      key: "name",
       render: (text: any) => <span>{text}</span>,
     },
     {
@@ -51,6 +51,29 @@ export default function JumpFun() {
             width={50}
             height={50}
           />
+        );
+      },
+    },
+    {
+      title: "Desc",
+      dataIndex: "desc",
+      key: "desc",
+      width: 150,
+      render: (text: any) => <span>{text}</span>,
+    },
+    {
+      title: "SocialMedia",
+      dataIndex: "socialMedia",
+      key: "socialMedia",
+      width: 150,
+      render: (text: string, record: any) => {
+        console.log(record.socialMedia);
+        return (
+          <div>
+            {record.socialMedia.map((ele: string) => (
+              <p>{ele}</p>
+            ))}
+          </div>
         );
       },
     },

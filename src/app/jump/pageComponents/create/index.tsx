@@ -15,6 +15,7 @@ import debounce from "lodash.debounce";
 import { fetcher } from "../../utils/fetcher";
 import BigNumber from "bignumber.js";
 import { useFormData } from "../../context/FormDataContext";
+import { useBalance, useDecimal } from "../../hook/balance";
 
 const CreateForm: React.FC = () => {
   const router = useRouter();
@@ -71,67 +72,16 @@ const CreateForm: React.FC = () => {
     }
     return isJpgOrPng && isLt2M;
   };
+  const { balanceData } = useBalance({
+    callViewMethod,
+    walletInfo,
+    loadingSetter: setLoading,
+  });
 
-  // get balance
-  const [balanceData, setBalanceData] = useState<BalanceData>();
-
-  const getBalance = useCallback(async () => {
-    try {
-      setLoading(true);
-      const rs = await callViewMethod({
-        chainId: JUMP_FUN_CONFIG.CHAIN_ID,
-        contractAddress: CONTRACT_ADDRESS.TOKEN,
-        methodName: "GetBalance",
-        args: {
-          symbol: JUMP_FUN_CONFIG.SYMBOL,
-          owner: walletInfo?.address as string,
-        },
-      });
-      return rs;
-    } catch (e) {
-      console.error(e), "getBalance";
-      return 0;
-    } finally {
-      setLoading(false);
-    }
-  }, [callViewMethod, walletInfo?.address]);
-
-  // get decimal
-  const [decimal, setDecimal] = useState<number>(JUMP_FUN_CONFIG.DECIMAL);
-  const getDecimal = useCallback(async () => {
-    try {
-      setLoading(true);
-      const rs = await callViewMethod({
-        chainId: JUMP_FUN_CONFIG.CHAIN_ID,
-        contractAddress: CONTRACT_ADDRESS.TOKEN,
-        methodName: "GetTokenInfo",
-        args: {
-          symbol: JUMP_FUN_CONFIG.SYMBOL,
-        },
-      });
-      return rs;
-    } catch (e) {
-      return JUMP_FUN_CONFIG.SYMBOL;
-    } finally {
-      setLoading(false);
-    }
-  }, [callViewMethod]);
-
-  useEffect(() => {
-    const getInfo = async () => {
-      const balanceRes = await getBalance();
-      setBalanceData((balanceRes as DataResponse<BalanceData>)?.data);
-    };
-    getInfo();
-  }, [getBalance, walletInfo]);
-
-  useEffect(() => {
-    const getInfo = async () => {
-      const decimalRes = await getDecimal();
-      setDecimal((decimalRes as DataResponse<TokenInfoData>)?.data?.decimals);
-    };
-    getInfo();
-  }, [getDecimal, walletInfo]);
+  const { decimal } = useDecimal({
+    callViewMethod,
+    walletInfo,
+  });
 
   // token name
   const [tokenName, setTokenName] = useState<string>("");
@@ -241,6 +191,8 @@ const CreateForm: React.FC = () => {
       uploadUrl,
       decimal,
       symbol,
+      desc: description,
+      socialMedia: Object.values(links),
     });
     router.push("/jump/confirm");
   };
@@ -421,7 +373,8 @@ const CreateForm: React.FC = () => {
           <div className="text-white">
             <span className="text-sm">Balance: </span>
             <span className="font-semibold">
-              {formatTokenAmount(balanceData?.balance || "", decimal)} ELF
+              {formatTokenAmount(balanceData?.balance || "", decimal)}{" "}
+              {balanceData?.symbol}
             </span>
           </div>
         </Form>

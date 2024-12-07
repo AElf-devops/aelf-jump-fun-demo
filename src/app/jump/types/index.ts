@@ -25,17 +25,21 @@ export interface ExternalInfo {
 }
 
 export interface TokenItem {
-  account: string;
-  cost: string;
-  decimals: number;
-  externalInfo: ExternalInfo;
-  isBurnable: boolean;
-  issueChainId: number;
-  issuer: string;
-  owner: string;
-  symbol: string;
-  tokenName: string;
-  totalSupply: string;
+  creator: string; // Address of the creator
+  decimals: number; // Number of decimals
+  desc: string; // Description of the token
+  externalInfo: {
+    value: Record<string, any>; // External info can be key-value pairs
+  };
+  isBurnable: boolean; // Indicates if the token is burnable
+  issueChainId: number; // Chain ID where the token is issued
+  issuer: string; // Address of the issuer
+  name: string; // Name of the token
+  owner: string; // Address of the owner
+  seedFee: string; // Seed fee as a string (to handle large numbers)
+  socialMedia: string[]; // Array of social media URLs
+  ticker: string; // Token ticker
+  totalSupply: string; // Total supply of the token (as a string to handle large numbers)
 }
 
 export interface TokenList {

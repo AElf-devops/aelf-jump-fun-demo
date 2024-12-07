@@ -9,7 +9,7 @@ export const FormDataProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [formData, setFormData] = useState<any>(null);
+  const [formData, setFormData] = useState<any>({});
 
   return (
     <FormDataContext.Provider value={{ formData, setFormData }}>

@@ -8,16 +8,47 @@ import { useFormData } from "../../context/FormDataContext";
 import { useConnectWallet } from "@aelf-web-login/wallet-adapter-react";
 import { CONTRACT_ADDRESS, JUMP_FUN_CONFIG } from "../../configOnline";
 import BigNumber from "bignumber.js";
-
+import { useBalance } from "../../hook/balance";
+import { formatTokenAmount } from "../../utils/addressFormat";
+import { DataResponse, TokenItem, TokenList } from "../../types";
+import { validateTokenInfoExists } from "../../utils/contract";
+import {
+  convertTokenInfoToValidateInput,
+  ValidateTokenInfoExistsInput,
+} from "../../utils/convert";
+function generateRandomString() {
+  return Array.from({ length: 10 }, () =>
+    String.fromCharCode(65 + Math.floor(Math.random() * 26))
+  ).join("");
+}
+const FAKE_SYMBOL = generateRandomString();
 const BuyTokenCard = () => {
   const [loading, setLoading] = useState(false);
   const { walletInfo, callViewMethod, callSendMethod } = useConnectWallet();
+  console.log(walletInfo, "walletInfo");
+  const { balanceData } = useBalance({
+    callViewMethod,
+    walletInfo,
+  });
   const router = useRouter();
   const handleBack = () => {
     router.back();
   };
   const { formData } = useFormData();
-  const { amount, tokenName, uploadUrl, decimal, symbol } = formData;
+  const { amount, tokenName, uploadUrl, decimal, symbol, desc, socialMedia } =
+    formData;
+  // {
+  //   amount: 3,
+  //   tokenName: "abigail1",
+  //   uploadUrl:
+  //     "https://forest-testnet.s3.ap-northeast-1.amazonaws.com/1733540407094-checkbox-Checked.svg",
+  //   decimal: 8,
+  //   symbol: FAKE_SYMBOL,
+  //   desc: "xxxx",
+  //   socialMedia: [
+  //     "https://forest-testnet.s3.ap-northeast-1.amazonaws.com/1733540407094-checkbox-Checked.svg",
+  //   ],
+  // };
   const launch = async () => {
     try {
       setLoading(true);
@@ -34,29 +65,58 @@ const BuyTokenCard = () => {
             .toString(),
         },
       });
-
       if (!approveRs.error && approveRs.data.Status === "MINED") {
-        await callSendMethod({
+        launch;
+        const launchData: any = await callSendMethod({
           chainId: JUMP_FUN_CONFIG.CHAIN_ID,
           contractAddress: CONTRACT_ADDRESS.JUMPFUN,
-          methodName: "Create",
+          methodName: "Launch",
           args: {
-            symbol,
-            tokenName: tokenName,
+            ticker: symbol,
+            name: tokenName,
             imageUri: uploadUrl,
-            cost: new BigNumber(amount)
+            seedFee: new BigNumber(amount)
               .times(new BigNumber(10).pow(decimal))
               .toString(),
+            desc,
+            socialMedia,
           },
         });
+        if (launchData?.error) {
+          throw new Error(launchData?.error);
+        }
+        // filter tokenInfo
+        const tokenInfos: DataResponse<ValidateTokenInfoExistsInput> =
+          await callViewMethod({
+            chainId: JUMP_FUN_CONFIG.CHAIN_ID,
+            contractAddress: CONTRACT_ADDRESS.TOKEN,
+            methodName: "GetTokenInfo",
+            args: {
+              symbol,
+            },
+          });
+        console.log(tokenInfos, "tokenInfos");
+        const tokenInfo = tokenInfos.data;
+        if (!tokenInfo) {
+          throw new Error("Token info not found");
+        }
+        console.log(
+          JSON.stringify(convertTokenInfoToValidateInput(tokenInfo)),
+          "tokenInfo"
+        );
+        // validate token info
+        const txId = await validateTokenInfoExists(
+          convertTokenInfoToValidateInput(tokenInfo)
+        );
         antdMessage.success("Create success");
-        setTimeout(() => {
-          router.push("/jump");
-        }, 500);
+        // setTimeout(() => {
+        //   router.push("/jump");
+        // }, 500);
       } else {
         throw new Error("Approve failed");
       }
     } catch (e: unknown) {
+      console.error(e, "eeeeee");
       if (e instanceof Error) {
         antdMessage.error(e.message);
       } else {
@@ -89,12 +149,8 @@ const BuyTokenCard = () => {
         </div>
 
         {/* Amount Input */}
-        <div className="mb-4">
-          <Input
-            type="number"
-            placeholder="0"
-            className="w-full h-[48px] rounded-lg text-black text-center"
-          />
+        <div className="border h-[58px] mb-4 bg-white border-gray-300 rounded px-3 py-2 outline-none text-black min-w-[100px] flex items-center font-bold text-[16px]">
+          {amount}
         </div>
 
         {/* Balance Badge */}
@@ -102,7 +158,9 @@ const BuyTokenCard = () => {
           <Badge
             count={
               <span className="bg-green-100 text-green-600 px-3 py-1 rounded-full">
-                balance: 20 ELF
+                balance:{" "}
+                {formatTokenAmount(balanceData?.balance || "", decimal)}{" "}
+                {balanceData?.symbol}
               </span>
             }
             showZero
@@ -113,19 +171,21 @@ const BuyTokenCard = () => {
         <div className="mb-6 text-sm">
           <div className="flex justify-between py-2 border-b border-gray-700">
             <span>name</span>
-            <span className="font-semibold">Token</span>
+            <span className="font-semibold">{tokenName}</span>
           </div>
           <div className="flex justify-between py-2 border-b border-gray-700">
             <span>ticker</span>
-            <span className="font-semibold">$TOKEN</span>
+            <span className="font-semibold">{symbol}</span>
           </div>
-          <div className="flex justify-between py-2 border-b border-gray-700">
+          {/* <div className="flex justify-between py-2 border-b border-gray-700">
             <span>total supply</span>
             <span className="font-semibold">1,000,000,000</span>
-          </div>
+          </div> */}
           <div className="flex justify-between py-2">
             <span>cost</span>
-            <span className="font-semibold">0.1 ELF</span>
+            <span className="font-semibold">
+              {amount} {balanceData?.symbol}
+            </span>
           </div>
         </div>
 
@@ -142,9 +202,9 @@ const BuyTokenCard = () => {
         </div>
 
         {/* Bottom Tip */}
-        <div className="mt-4 text-center text-gray-400 text-sm">
+        {/* <div className="mt-4 text-center text-gray-400 text-sm">
           when your coin completes its bonding curve you receive 0.5 ELF
-        </div>
+        </div> */}
       </div>
     </div>
   );
