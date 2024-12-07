@@ -85,7 +85,7 @@ const TransactionTabs: React.FC<{ token: string }> = ({
     });
 
     message.success(
-      `${activeTab === "buy" ? "Buying" : "Selling"} ${amount} ${symbol}`
+      `${activeTab === "buy" ? "Buying" : "Selling"} ${amount} ${currentSymbol}`
     );
   };
 
