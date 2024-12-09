@@ -237,7 +237,7 @@ const BuyTokenCard = () => {
               href={`/jump/token/${symbol}`}
               className="flex justify-center items-center text-white text-center  text-[16px] font-bold hover:!text-white !active:!text-white"
             >
-              view on explorer
+              view on buy&sell
               <Image
                 alt="jump"
                 width={16}

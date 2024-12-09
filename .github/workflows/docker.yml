@@ -4,9 +4,18 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
+    inputs:
+      networkType:
+        description: "Specify the network type"
+        required: false
+        default: "testnet"
+        type: string
 
 jobs:
   build:
+    environment:
+      name: ${{ inputs.networkType }}
     name: Build and Push Docker image ${{inputs.environment}} to Docker Hub
     runs-on: ubuntu-latest
     permissions:
