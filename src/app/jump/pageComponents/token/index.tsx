@@ -1,49 +1,52 @@
 "use client";
-import React, { useState } from "react";
-import { Layout, Button, Input, Card, Row, Col, Typography } from "antd";
-import { Line } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-} from "chart.js";
-import "tailwindcss/tailwind.css";
 import TradeSection from "../../components/TradeSection";
-
-const { Header, Content, Footer } = Layout;
-const { Title } = Typography;
-
-// Register chart.js components
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement);
-
-// Dummy data for chart
-const chartData = {
-  labels: ["12:00", "12:30", "13:00", "13:30", "14:00"], // Time labels
-  datasets: [
-    {
-      label: "MemeCat Price (USD)",
-      data: [10, 12, 8, 14, 9], // Price data
-      borderColor: "rgba(75, 192, 192, 1)",
-      backgroundColor: "rgba(75, 192, 192, 0.2)",
-      tension: 0.1,
-    },
-  ],
-};
+import GoBack from "../../components/GoBack";
+import { useRouter } from "next/navigation";
+import ReactECharts from "echarts-for-react";
 
 const App = ({ id }: { id: string }) => {
-  return (
-    <div className="min-h-screen bg-[#000000C0]  ">
-      <header className="text-center py-4">
-        <div className="text-white">Token Market</div>
-      </header>
+  const router = useRouter();
+  const handleBack = () => {
+    router.back();
+  };
 
-      <Content className="py-8 flex justify-center items-center">
-        <div className="mx-auto px-4">
+  return (
+    <div className="container mx-auto p-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="md:col-span-2">
+          <div className="bg-[#000000C0] p-8 rounded-lg shadow-lg mt-8 mb-10">
+            <GoBack handleBack={handleBack} />
+            <div><span className="text-white">MemeCat ($MEMC) created by</span> <span className="text-blue-400">2B9SAT</span> <span className="text-gray-600">1 min ago</span> <span className="text-green-600">market cap: $45k</span></div>
+            <ReactECharts
+              option={{
+                xAxis: {
+                  data: [
+                    "2017-10-24",
+                    "2017-10-25",
+                    "2017-10-26",
+                    "2017-10-27",
+                  ],
+                },
+                yAxis: {},
+                series: [
+                  {
+                    type: "candlestick",
+                    data: [
+                      [20, 34, 10, 38],
+                      [40, 35, 30, 50],
+                      [31, 38, 33, 44],
+                      [38, 15, 5, 42],
+                    ],
+                  },
+                ],
+              }}
+            />
+          </div>
+        </div>
+        <div>
           <TradeSection token={id}></TradeSection>
         </div>
-      </Content>
+      </div>
     </div>
   );
 };

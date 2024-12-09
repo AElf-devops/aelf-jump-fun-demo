@@ -59,6 +59,8 @@
     "bignumber.js": "^9.1.2",
     "chaingpt-component": "0.2.0-beta.3",
     "chart.js": "^4.4.7",
+    "echarts": "^5.5.1",
+    "echarts-for-react": "^3.0.2",
     "graphql": "^16.9.0",
     "less": "^4.2.1",
     "less-loader": "^12.2.0",
