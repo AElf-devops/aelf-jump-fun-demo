@@ -8,9 +8,9 @@ on:
 
 jobs:
   build:
-    environment:
-      name: ${{ steps.network.outputs.networkType }}
     name: Build and Push Docker image ${{inputs.environment}} to Docker Hub
+    environment:
+      name: ${{ github.ref_name == 'master' && 'mainnet' || 'testnet' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -21,9 +21,6 @@ jobs:
       - uses: pnpm/action-setup@v4
         with:
           version: 9
-      - name: Determine network type
-        id: network
-        run: echo "::set-output name=networkType::${{ github.ref_name == 'master' && 'mainnet' || 'testnet' }}"
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
