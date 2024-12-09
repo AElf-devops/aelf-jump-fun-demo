@@ -22,7 +22,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
-          cache: 'pnpm'
+          cache: "pnpm"
+      - name: create env file
+        run: |
+          touch .env
+          echo NEXT_PUBLIC_MAINCHAIN=${{ vars.NEXT_PUBLIC_MAINCHAIN }} >> .env
+          echo NEXT_PUBLIC_SIDECHAIN=${{ vars.NEXT_PUBLIC_SIDECHAIN }} >> .env
 
       - run: pnpm install
       - run: pnpm build
@@ -51,7 +56,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-      
+
       - name: Set short git commit SHA
         id: vars
         run: |
