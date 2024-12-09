@@ -4,18 +4,12 @@ on:
   push:
     branches:
       - master
-  workflow_dispatch:
-    inputs:
-      networkType:
-        description: "Specify the network type"
-        required: false
-        default: "testnet"
-        type: string
+      - develop
 
 jobs:
   build:
     environment:
-      name: ${{ inputs.networkType }}
+      name: ${{ github.ref == 'refs/heads/master' && 'mainnet' || 'testnet' }}
     name: Build and Push Docker image ${{inputs.environment}} to Docker Hub
     runs-on: ubuntu-latest
     permissions:
@@ -84,7 +78,7 @@ jobs:
               ref: 'main',
               inputs: {
                 env: 'staging',
-                network: 'testnet',
+                network: '${{ inputs.environment }}',
                 commit_sha: 'sha-${{ steps.vars.outputs.short_sha }}',
               }
             })
