@@ -89,17 +89,14 @@ const TransactionTabs: React.FC<{ token: string }> = ({
       receiveLimit: 1,
     };
 
-    const { TransactionId } = await callSendMethod<
-      any,
-      { TransactionId: string }
-    >({
+    const res = await callSendMethod<any, { transactionId: string }>({
       contractAddress: CONTRACT_ADDRESS.BUYSELL,
       methodName: activeTab === "buy" ? "Buy" : "Sell",
       chainId: "tDVW",
       args,
     });
 
-    setTransactionId(TransactionId);
+    setTransactionId(res.transactionId);
     setProcessingVisible(false);
     setSubmittedVisible(true);
   };
@@ -238,6 +235,7 @@ const TransactionTabs: React.FC<{ token: string }> = ({
             href={`https://testnet.aelfscan.io/tDVW/tx/${transactionId}`}
             target="_blank"
             rel="noopener noreferrer"
+            className="block text-white"
           >
             view on explorer <ExportOutlined />
           </Link>
