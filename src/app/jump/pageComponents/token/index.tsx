@@ -6,6 +6,97 @@ import ReactECharts from "echarts-for-react";
 import CustomTabs from "../../components/CustomTabs";
 import { useState } from "react";
 import Message from "../../components/Message";
+import { Suspense } from "react";
+import { gql, useSuspenseQuery } from "@apollo/client";
+
+const chartQuery = gql`
+  query ChartQuery($input: GetKLineListInput) {
+    getKLineList(input: $input) {
+      data {
+        ticker
+        period
+        open
+        close
+        high
+        low
+        openWithoutFee
+        closeWithoutFee
+        highWithoutFee
+        lowWithoutFee
+        volume
+        timestamp
+        id
+        metadata {
+          chainId
+          block {
+            blockHash
+            blockHeight
+            blockTime
+          }
+        }
+      }
+    }
+  }
+`;
+
+type TChartQueryResponse = {
+  getKLineList: {
+    __typename: string
+    data: Array<{
+      __typename: string
+      ticker: string
+      period: number
+      open: number
+      close: number
+      high: number
+      low: number
+      openWithoutFee: number
+      closeWithoutFee: number
+      highWithoutFee: number
+      lowWithoutFee: number
+      volume: number
+      timestamp: number
+      id: any
+      metadata: {
+        __typename: string
+        chainId: any
+        block: any
+      }
+    }>
+  }
+}
+
+const Chart = () => {
+  const { data } = useSuspenseQuery<TChartQueryResponse>(chartQuery, {
+    variables: {
+      input: {
+        ticker: "ASASDEFRGT",
+        period: 1,
+        timestampMin: 0,
+        timestampMax: 1000000000000000000,
+      },
+    },
+  });
+
+  console.log(data);
+
+  return (
+    <ReactECharts
+      option={{
+        xAxis: {
+          data: data.getKLineList.data.map(item => new Date(Number(`${item.timestamp}000`)).toLocaleString()),
+        },
+        yAxis: {},
+        series: [
+          {
+            type: "candlestick",
+            data: data.getKLineList.data.map(item => ([item.open, item.close, item.low, item.high])),
+          },
+        ],
+      }}
+    />
+  );
+};
 
 const tabsData = [
   {
@@ -41,30 +132,9 @@ const App = ({ id }: { id: string }) => {
               <span className="text-gray-600">1 min ago</span>{" "}
               <span className="text-green-600">market cap: $45k</span>
             </div>
-            <ReactECharts
-              option={{
-                xAxis: {
-                  data: [
-                    "2017-10-24",
-                    "2017-10-25",
-                    "2017-10-26",
-                    "2017-10-27",
-                  ],
-                },
-                yAxis: {},
-                series: [
-                  {
-                    type: "candlestick",
-                    data: [
-                      [20, 34, 10, 38],
-                      [40, 35, 30, 50],
-                      [31, 38, 33, 44],
-                      [38, 15, 5, 42],
-                    ],
-                  },
-                ],
-              }}
-            />
+            <Suspense fallback={<div>Loading...</div>}>
+              <Chart />
+            </Suspense>
           </div>
           <div className="bg-[#000000C0] p-8 rounded-lg shadow-lg mt-8 mb-10">
             <CustomTabs

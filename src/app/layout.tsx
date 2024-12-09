@@ -5,8 +5,7 @@ import { GoogleAnalytics } from '@next/third-parties/google';
 import './ui/globals.css';
 import { inter } from '@/app/ui/fonts';
 import { StoreProvider } from './StoreProvider';
-import Header from '@/components/Header';
-// import Footer from '@/components/Footer';
+import { ApolloWrapper } from "./ApolloWrapper";
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -21,13 +20,10 @@ export default function RootLayout({
   return (
     <StoreProvider>
       <html lang="en">
-        {/*<script> window.addEventListener('message', function (event) { if (event.data.action === 'resizeChat') { const chatIframe = document.getElementById('paal-chat'); chatIframe.style.width = event.data.width; chatIframe.style.height = event.data.height; chatIframe.style.bottom = event.data.bottom; } }, false);</script>*/}
         <body className={`${inter.className} antialiased`}>
           <AntdRegistry>
             <AelfdRegistry>
-              {/*<Header />*/}
-              {children}
-              {/*<Footer />*/}
+              <ApolloWrapper>{children}</ApolloWrapper>
             </AelfdRegistry>
           </AntdRegistry>
         </body>
