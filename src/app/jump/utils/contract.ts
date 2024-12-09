@@ -160,9 +160,7 @@ export async function crossChainCreateToken(
         console.log(txResult);
         if (txResult.Status === "MINED") {
           setProgress(100);
-          setTimeout(() => {
-            done = true;
-          }, 100);
+          done = true;
         }
       } catch (err) {
         setProgress(0);

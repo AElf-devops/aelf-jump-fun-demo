@@ -185,16 +185,17 @@ const CreateForm: React.FC = () => {
   const { setFormData } = useFormData();
   const createToken = async () => {
     const amount = symbolInfo.tokenPrice.amount;
-    setFormData({
+    const params = {
       amount,
       tokenName,
       uploadUrl,
-      decimal,
+      decimal: decimal.toString(),
       symbol,
       desc: description,
-      socialMedia: Object.values(links),
-    });
-    router.push("/jump/confirm");
+      socialMedia: JSON.stringify(Object.values(links)),
+    };
+    const searchParams = new URLSearchParams(params);
+    router.push(`/jump/confirm?${searchParams.toString()}`);
   };
 
   return (

@@ -3,7 +3,7 @@ import { Button, Input, Badge, message as antdMessage } from "antd";
 import { LeftOutlined } from "@ant-design/icons";
 import React, { useState } from "react";
 import GoBack from "../../components/GoBack";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useFormData } from "../../context/FormDataContext";
 import { useConnectWallet } from "@aelf-web-login/wallet-adapter-react";
 import { CONTRACT_ADDRESS, JUMP_FUN_CONFIG } from "../../configOnline";
@@ -29,7 +29,6 @@ const FAKE_SYMBOL = generateRandomString();
 const BuyTokenCard = () => {
   const [loading, setLoading] = useState(false);
   const { walletInfo, callViewMethod, callSendMethod } = useConnectWallet();
-  console.log(walletInfo, "walletInfo");
   const { balanceData } = useBalance({
     callViewMethod,
     walletInfo,
@@ -39,8 +38,23 @@ const BuyTokenCard = () => {
     router.back();
   };
   const { formData } = useFormData();
-  const { amount, tokenName, uploadUrl, decimal, symbol, desc, socialMedia } =
-    formData;
+  const searchParams = useSearchParams();
+  const amount = searchParams.get("amount") || 0;
+  const tokenName = searchParams.get("tokenName");
+  const uploadUrl = searchParams.get("uploadUrl");
+  const decimal = +searchParams.get("decimal")! || JUMP_FUN_CONFIG.DECIMAL;
+  const symbol = searchParams.get("symbol") || JUMP_FUN_CONFIG.SYMBOL;
+  const desc = searchParams.get("desc");
+  const socialMedia = JSON.parse(searchParams.get("socialMedia") || "[]");
+  console.log({
+    amount,
+    tokenName,
+    uploadUrl,
+    decimal,
+    symbol,
+    desc,
+    socialMedia,
+  });
   // {
   //   amount: 3,
   //   tokenName: "abigail1",
@@ -158,7 +172,9 @@ const BuyTokenCard = () => {
         <div className="mb-4 flex justify-center items-center ">
           <GoBack handleBack={handleBack}></GoBack>
         </div>
-        {(loading || !!progress) && <ProgressBar progress={20}></ProgressBar>}
+        {(loading || !!progress) && (
+          <ProgressBar progress={progress}></ProgressBar>
+        )}
         {/* Header */}
         <div className="text-center mb-4">
           <h2 className="text-[24px] font-bold text-white flex justify-center items-center">
@@ -218,6 +234,7 @@ const BuyTokenCard = () => {
           <Button
             type="primary"
             loading={loading}
+            disabled={loading}
             className="w-full h-[48px] bg-blue-500 hover:bg-blue-600 rounded-lg text-white font-semibold"
             onClick={launch}
           >
