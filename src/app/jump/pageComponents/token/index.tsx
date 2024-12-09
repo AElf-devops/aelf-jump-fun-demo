@@ -3,8 +3,27 @@ import TradeSection from "../../components/TradeSection";
 import GoBack from "../../components/GoBack";
 import { useRouter } from "next/navigation";
 import ReactECharts from "echarts-for-react";
+import CustomTabs from "../../components/CustomTabs";
+import { useState } from "react";
+import Message from "../../components/Message";
+
+const tabsData = [
+  {
+    key: "chat",
+    label: "chat",
+  },
+  {
+    key: "transactions",
+    label: "all transactions",
+  },
+  {
+    key: "trades",
+    label: "my trades",
+  },
+];
 
 const App = ({ id }: { id: string }) => {
+  const [tab, setTab] = useState("chat");
   const router = useRouter();
   const handleBack = () => {
     router.back();
@@ -16,7 +35,12 @@ const App = ({ id }: { id: string }) => {
         <div className="md:col-span-2">
           <div className="bg-[#000000C0] p-8 rounded-lg shadow-lg mt-8 mb-10">
             <GoBack handleBack={handleBack} />
-            <div><span className="text-white">MemeCat ($MEMC) created by</span> <span className="text-blue-400">2B9SAT</span> <span className="text-gray-600">1 min ago</span> <span className="text-green-600">market cap: $45k</span></div>
+            <div>
+              <span className="text-white">MemeCat ($MEMC) created by</span>{" "}
+              <span className="text-blue-400">2B9SAT</span>{" "}
+              <span className="text-gray-600">1 min ago</span>{" "}
+              <span className="text-green-600">market cap: $45k</span>
+            </div>
             <ReactECharts
               option={{
                 xAxis: {
@@ -41,6 +65,45 @@ const App = ({ id }: { id: string }) => {
                 ],
               }}
             />
+          </div>
+          <div className="bg-[#000000C0] p-8 rounded-lg shadow-lg mt-8 mb-10">
+            <CustomTabs
+              tabs={tabsData}
+              defaultActiveKey="chat"
+              onTabChange={(e) => setTab(e)}
+            />
+            <div>
+              {tab === "chat" && (
+                <div className="bg-gray-900 p-8">
+                  <Message
+                    author="$TOKEN"
+                    time="3:57:12 PM"
+                    likes={8}
+                    content="LFGGGGGGGGGGGGGGGGGGGGGGG!"
+                    type="token"
+                  />
+                  <Message
+                    author="4kexw1"
+                    time="3:57:12 PM"
+                    likes={8}
+                    content="@4kexw1 hello!"
+                    type="user"
+                    isCurrentUser
+                  />
+                  <Message
+                    author="4kexw1"
+                    time="3:57:12 PM"
+                    likes={8}
+                    content="LFGGGGGGGGGGGGGGGGGGGGGGG!"
+                    type="reply"
+                  />
+                </div>
+              )}
+              {tab === "transactions" && (
+                <div className="text-white">transactions</div>
+              )}
+              {tab === "trades" && <div className="text-white">trades</div>}
+            </div>
           </div>
         </div>
         <div>
