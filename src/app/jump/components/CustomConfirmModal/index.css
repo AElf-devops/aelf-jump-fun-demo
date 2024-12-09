@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.custom-confrm-modal .ant-modal-content {
+  @apply !rounded-xl  !bg-[#060714] !py-4 !px-[56px];
+}

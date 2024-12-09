@@ -5,12 +5,14 @@ import React, { useState } from "react";
 import GoBack from "../../components/GoBack";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useFormData } from "../../context/FormDataContext";
+import Image from "next/image";
 import { useConnectWallet } from "@aelf-web-login/wallet-adapter-react";
 import { CONTRACT_ADDRESS, JUMP_FUN_CONFIG } from "../../configOnline";
 import BigNumber from "bignumber.js";
 import { useBalance } from "../../hook/balance";
 import { formatTokenAmount } from "../../utils/addressFormat";
 import { DataResponse, TokenItem, TokenList } from "../../types";
+import ConfirmModal from "../../components/CustomConfirmModal";
 import {
   crossChainCreateToken,
   validateTokenInfoExists,
@@ -20,6 +22,7 @@ import {
   ValidateTokenInfoExistsInput,
 } from "../../utils/convert";
 import { ProgressBar } from "../../components/Progress";
+import Link from "next/link";
 function generateRandomString() {
   return Array.from({ length: 10 }, () =>
     String.fromCharCode(65 + Math.floor(Math.random() * 26))
@@ -37,7 +40,7 @@ const BuyTokenCard = () => {
   const handleBack = () => {
     router.back();
   };
-  const { formData } = useFormData();
+  // const { formData } = useFormData();
   const searchParams = useSearchParams();
   const amount = searchParams.get("amount") || 0;
   const tokenName = searchParams.get("tokenName");
@@ -46,27 +49,7 @@ const BuyTokenCard = () => {
   const symbol = searchParams.get("symbol") || JUMP_FUN_CONFIG.SYMBOL;
   const desc = searchParams.get("desc");
   const socialMedia = JSON.parse(searchParams.get("socialMedia") || "[]");
-  console.log({
-    amount,
-    tokenName,
-    uploadUrl,
-    decimal,
-    symbol,
-    desc,
-    socialMedia,
-  });
-  // {
-  //   amount: 3,
-  //   tokenName: "abigail1",
-  //   uploadUrl:
-  //     "https://forest-testnet.s3.ap-northeast-1.amazonaws.com/1733540407094-checkbox-Checked.svg",
-  //   decimal: 8,
-  //   symbol: "UKGVNIVTEF",
-  //   desc: "xxxx",
-  //   socialMedia: [
-  //     "https://forest-testnet.s3.ap-northeast-1.amazonaws.com/1733540407094-checkbox-Checked.svg",
-  //   ],
-  // };
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [progress, setProgeress] = useState(0);
   const launch = async () => {
     try {
@@ -146,10 +129,7 @@ const BuyTokenCard = () => {
         );
         console.log(txTd, txRes, signedTx, "validateTokenInfoExists");
         await crossChainCreateToken(txTd, signedTx, setProgeress);
-        antdMessage.success("Create success");
-        // setTimeout(() => {
-        //   router.push("/jump");
-        // }, 500);
+        setIsModalVisible(true);
       } else {
         throw new Error("Approve failed");
       }
@@ -246,6 +226,27 @@ const BuyTokenCard = () => {
         {/* <div className="mt-4 text-center text-gray-400 text-sm">
           when your coin completes its bonding curve you receive 0.5 ELF
         </div> */}
+        <ConfirmModal
+          visible={isModalVisible}
+          title="order submitted"
+          description="Your order has been submitted for processing."
+          onClick={() => setIsModalVisible(false)}
+          btnText="close"
+          footer={
+            <Link
+              href={`/jump/token/${symbol}`}
+              className="flex justify-center items-center text-white text-center  text-[16px] font-bold hover:!text-white !active:!text-white"
+            >
+              view on explorer
+              <Image
+                alt="jump"
+                width={16}
+                height={16}
+                src="/images/jump/arrow_outward.svg"
+              ></Image>
+            </Link>
+          }
+        ></ConfirmModal>
       </div>
     </div>
   );
