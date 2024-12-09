@@ -8,6 +8,8 @@ on:
 
 jobs:
   build:
+    environment:
+      name: ${{ steps.network.outputs.networkType }}
     name: Build and Push Docker image ${{inputs.environment}} to Docker Hub
     runs-on: ubuntu-latest
     permissions:
@@ -27,8 +29,6 @@ jobs:
           node-version: lts/*
           cache: "pnpm"
       - name: create env file
-        environment:
-          name: ${{ steps.network.outputs.networkType }}
         run: |
           touch .env
           echo NEXT_PUBLIC_MAINCHAIN=${{ vars.NEXT_PUBLIC_MAINCHAIN }} >> .env
