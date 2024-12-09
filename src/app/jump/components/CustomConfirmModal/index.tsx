@@ -8,6 +8,7 @@ type ConfirmProps = {
   onClick: () => void;
   btnText: string;
   footer?: React.ReactNode;
+  disabled?: boolean;
 };
 
 const Confirm: React.FC<ConfirmProps> = ({
@@ -17,6 +18,7 @@ const Confirm: React.FC<ConfirmProps> = ({
   onClick,
   btnText,
   footer,
+  disabled
 }) => {
   return (
     <Modal
@@ -38,6 +40,7 @@ const Confirm: React.FC<ConfirmProps> = ({
         <Button
           className="flex !w-[277px] !h-[56px] !py-[19px] flex-col justify-center items-center !rounded-full border border-black !bg-[#0E8DF5] shadow-[2px_2px_0px_0px_#000] text-white !font-bold !text-[16px] disabled:opacity-40 mb-4"
           onClick={onClick}
+          disabled={disabled}
         >
           {btnText}
         </Button>

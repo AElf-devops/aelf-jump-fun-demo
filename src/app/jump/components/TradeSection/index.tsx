@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Input, Tabs, message } from "antd";
-import { CheckCircleOutlined } from "@ant-design/icons";
+import { ExportOutlined } from "@ant-design/icons";
 import "./index.css";
 import Image from "next/image";
 import { CONTRACT_ADDRESS, JUMP_FUN_CONFIG } from "../../configOnline";
@@ -9,6 +9,8 @@ import useBalance from "../../hook/balance-new";
 import BigNumber from "bignumber.js";
 import useTokenPrice from "../../hook/token-price";
 import useTokenInfo from "../../hook/token-info";
+import Confirm from "../CustomConfirmModal";
+import Link from "next/link";
 const { TabPane } = Tabs;
 
 const DECIMAL = JUMP_FUN_CONFIG.DECIMAL;
@@ -19,17 +21,24 @@ const TransactionTabs: React.FC<{ token: string }> = ({
 }: {
   token: string;
 }) => {
-  const symbol = JUMP_FUN_CONFIG.SYMBOL;
   const [activeTab, setActiveTab] = useState<"buy" | "sell">("buy");
   const currentSymbol = activeTab === "buy" ? "ELF" : token;
   const { callSendMethod } = useConnectWallet();
   const { data: userBalance } = useBalance({ symbol: currentSymbol });
   const [amount, setAmount] = useState<string>("");
-  const {data: tokenPrice} = useTokenPrice({ ticker: token, type: activeTab, amount });
-  const {data: tokenInfo} = useTokenInfo({ symbol: currentSymbol });
+  const { data: tokenPrice } = useTokenPrice({
+    ticker: token,
+    type: activeTab,
+    amount,
+  });
+  const { data: tokenInfo } = useTokenInfo({ symbol: currentSymbol });
   const handleTabChange = (key: string) => {
     setActiveTab(key as "buy" | "sell");
   };
+  const [confirmVisible, setConfirmVisible] = useState(false);
+  const [processingVisible, setProcessingVisible] = useState(false);
+  const [submittedVisible, setSubmittedVisible] = useState(false);
+  const [transactionId, setTransactionId] = useState<string | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -51,6 +60,9 @@ const TransactionTabs: React.FC<{ token: string }> = ({
   };
 
   const handleConfirm = async () => {
+    setTransactionId(null);
+    setProcessingVisible(true);
+    setConfirmVisible(false);
     if (!userBalance) return;
 
     if (userBalance.lt(amount || "0")) {
@@ -63,7 +75,7 @@ const TransactionTabs: React.FC<{ token: string }> = ({
     await callSendMethod({
       contractAddress: CONTRACT_ADDRESS.TOKEN_TDVW,
       methodName: "Approve",
-      chainId: 'tDVW',
+      chainId: "tDVW",
       args: {
         spender: CONTRACT_ADDRESS.BUYSELL,
         amount: _amount,
@@ -75,18 +87,21 @@ const TransactionTabs: React.FC<{ token: string }> = ({
       amount: _amount,
       ticker: token,
       receiveLimit: 1,
-    }
+    };
 
-    await callSendMethod({
+    const { TransactionId } = await callSendMethod<
+      any,
+      { TransactionId: string }
+    >({
       contractAddress: CONTRACT_ADDRESS.BUYSELL,
       methodName: activeTab === "buy" ? "Buy" : "Sell",
-      chainId: 'tDVW',
+      chainId: "tDVW",
       args,
     });
 
-    message.success(
-      `${activeTab === "buy" ? "Buying" : "Selling"} ${amount} ${currentSymbol}`
-    );
+    setTransactionId(TransactionId);
+    setProcessingVisible(false);
+    setSubmittedVisible(true);
   };
 
   return (
@@ -131,9 +146,14 @@ const TransactionTabs: React.FC<{ token: string }> = ({
         min={0}
         suffix={
           <div className="flex items-center space-x-2 ml-2">
-            <span className="text-[20px] font-bold text-black">{currentSymbol}</span>
+            <span className="text-[20px] font-bold text-black">
+              {currentSymbol}
+            </span>
             <Image
-              src={tokenInfo?.externalInfo?.value.__ft_image_uri || "/images/jump/token-logo.svg"}
+              src={
+                tokenInfo?.externalInfo?.value.__ft_image_uri ||
+                "/images/jump/token-logo.svg"
+              }
               width={38}
               height={38}
               alt="token-logo"
@@ -179,11 +199,50 @@ const TransactionTabs: React.FC<{ token: string }> = ({
 
       <Button
         className="flex !w-full !h-[56px] !py-[19px] flex-col justify-center items-center !rounded-full border border-black !bg-[#40B11A] shadow-[2px_2px_0px_0px_#000] text-white !font-bold !text-[16px] disabled:opacity-40"
-        onClick={handleConfirm}
+        onClick={() => setConfirmVisible(true)}
         disabled={!amount}
       >
         {activeTab} {token}
       </Button>
+      <Confirm
+        visible={confirmVisible}
+        title={`confirm ${activeTab}`}
+        description={`${activeTab} ${activeTab === "buy" ? tokenPrice : amount} ${token} for ${activeTab === "sell" ? tokenPrice : amount} ELF?`}
+        btnText="submit order"
+        onClick={handleConfirm}
+        footer={
+          <button
+            className="block mx-auto"
+            onClick={() => setConfirmVisible(false)}
+          >
+            cancel
+          </button>
+        }
+      />
+      <Confirm
+        visible={processingVisible}
+        title="processing your order"
+        description="please wait while we process your order"
+        btnText="processing..."
+        disabled
+        onClick={() => {}}
+      />
+      <Confirm
+        visible={submittedVisible}
+        title="order submitted"
+        description="Your order has been submitted for processing."
+        btnText="close"
+        onClick={() => setSubmittedVisible(false)}
+        footer={
+          <Link
+            href={`https://testnet.aelfscan.io/tDVW/tx/${transactionId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            view on explorer <ExportOutlined />
+          </Link>
+        }
+      />
     </div>
   );
 };
