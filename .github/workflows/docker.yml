@@ -4,18 +4,10 @@ on:
   push:
     branches:
       - master
-  workflow_dispatch:
-    inputs:
-      networkType:
-        description: "Specify the network type"
-        required: false
-        default: "testnet"
-        type: string
+      - develop
 
 jobs:
   build:
-    environment:
-      name: ${{ inputs.networkType }}
     name: Build and Push Docker image ${{inputs.environment}} to Docker Hub
     runs-on: ubuntu-latest
     permissions:
@@ -27,12 +19,16 @@ jobs:
       - uses: pnpm/action-setup@v4
         with:
           version: 9
-
+      - name: Determine network type
+        id: network
+        run: echo "::set-output name=networkType::${{ github.ref_name == 'master' && 'mainnet' || 'testnet' }}"
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
           cache: "pnpm"
       - name: create env file
+        environment:
+          name: ${{ steps.network.outputs.networkType }}
         run: |
           touch .env
           echo NEXT_PUBLIC_MAINCHAIN=${{ vars.NEXT_PUBLIC_MAINCHAIN }} >> .env
