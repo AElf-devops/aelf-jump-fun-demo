@@ -2,6 +2,7 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { ResolutionString } from "./dts/charting_library";
 import TV from "./TV";
 import Script from 'next/script'
+import { SocketAdapter } from "./socket-adapter";
 
 type themeName = "Dark" | "Light";
 const TradingView: React.FC<{
@@ -26,7 +27,7 @@ const TradingView: React.FC<{
       if (!createChart) {
         const TVChart = new TV({
           pairData,
-          SocketApi: null,
+          SocketApi: new SocketAdapter(),
           isMobile: false,
           Locale: "en",
           onReadyCallback: () => setLoading(false),

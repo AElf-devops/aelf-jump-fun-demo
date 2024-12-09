@@ -1,9 +1,11 @@
 "use client";
 import { useRouter } from "next/navigation";
 import TradingView from "@/app/jump/components/TradingView/TradingView";
+import { useState } from "react";
 
 const CreateForm: React.FC = () => {
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
   const handleBack = () => {
     router.back();
   };
@@ -34,7 +36,7 @@ const CreateForm: React.FC = () => {
                 </svg>
                 <span className="font-bold">go back</span>
               </button>
-              <TradingView />
+              <TradingView setLoading={setLoading} />
             </div>
           </div>
           <div>right</div>
