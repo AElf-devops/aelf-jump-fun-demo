@@ -6,11 +6,14 @@ on:
       - master
       - develop
 
+env:
+  network: ${{ github.ref == 'refs/heads/master' && 'mainnet' || 'testnet' }}
+
 jobs:
   build:
     environment:
-      name: ${{ github.ref == 'refs/heads/master' && 'mainnet' || 'testnet' }}
-    name: Build and Push Docker image ${{inputs.environment}} to Docker Hub
+      name: ${{ github.env.network }}
+    name: Build and Push Docker image ${{ github.env.network }} to Docker Hub
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -77,8 +80,8 @@ jobs:
               workflow_id: 'jump-fun-deploy.yaml',
               ref: 'main',
               inputs: {
-                env: 'staging',
-                network: '${{ inputs.environment }}',
+                env: '${{ github.env.network == 'mainnet' && 'production' || 'staging' }}',
+                network: '${{ github.env.network }}',
                 commit_sha: 'sha-${{ steps.vars.outputs.short_sha }}',
               }
             })
