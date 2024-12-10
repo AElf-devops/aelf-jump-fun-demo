@@ -10,6 +10,7 @@ import { CONTRACT_ADDRESS, JUMP_FUN_CONFIG } from "../../configOnline";
 import { DataResponse, TokenItem, TokenList } from "../../types";
 import { formatTokenAmount } from "../../utils/addressFormat";
 import CustomTabs from "../../components/CustomTabs";
+import TokenCard from "../../components/TokenCard";
 const tabsData = [
   {
     key: "hot",
@@ -33,6 +34,100 @@ const tabsData = [
   { key: "listed", label: "listed" },
   { key: "myAgents", label: "my agents" },
 ];
+
+const mockData = [
+  {
+    title: "MemeCat",
+    marketCap: "$45k",
+    timeAgo: "1 min ago",
+    creator: "2B95AT",
+    progress: 66,
+    onBuy: () => alert("Buying MemeCat"),
+    likes: 234,
+    imageUrl: "https://via.placeholder.com/64",
+  },
+  {
+    title: "CryptoDog",
+    marketCap: "$50k",
+    timeAgo: "2 mins ago",
+    creator: "3C78GH",
+    progress: 80,
+    onBuy: () => alert("Buying CryptoDog"),
+    likes: 150,
+    imageUrl: "https://via.placeholder.com/64",
+  },
+  {
+    title: "PixelBird",
+    marketCap: "$30k",
+    timeAgo: "5 mins ago",
+    creator: "1A45JK",
+    progress: 40,
+    onBuy: () => alert("Buying PixelBird"),
+    likes: 98,
+    imageUrl: "https://via.placeholder.com/64",
+  },
+  {
+    title: "BitBunny",
+    marketCap: "$25k",
+    timeAgo: "10 mins ago",
+    creator: "7G90LM",
+    progress: 55,
+    onBuy: () => alert("Buying BitBunny"),
+    likes: 180,
+    imageUrl: "https://via.placeholder.com/64",
+  },
+  {
+    title: "DoggoCoin",
+    marketCap: "$100k",
+    timeAgo: "20 mins ago",
+    creator: "4H21NP",
+    progress: 90,
+    onBuy: () => alert("Buying DoggoCoin"),
+    likes: 350,
+    imageUrl: "https://via.placeholder.com/64",
+  },
+  {
+    title: "LunaLion",
+    marketCap: "$75k",
+    timeAgo: "15 mins ago",
+    creator: "5K32QR",
+    progress: 72,
+    onBuy: () => alert("Buying LunaLion"),
+    likes: 240,
+    imageUrl: "https://via.placeholder.com/64",
+  },
+  {
+    title: "ApeInu",
+    marketCap: "$60k",
+    timeAgo: "30 mins ago",
+    creator: "6J54ST",
+    progress: 85,
+    onBuy: () => alert("Buying ApeInu"),
+    likes: 300,
+    imageUrl: "https://via.placeholder.com/64",
+  },
+  {
+    title: "DogeShiba",
+    marketCap: "$35k",
+    timeAgo: "25 mins ago",
+    creator: "9L87UV",
+    progress: 50,
+    onBuy: () => alert("Buying DogeShiba"),
+    likes: 200,
+    imageUrl: "https://via.placeholder.com/64",
+  },
+  {
+    title: "ShibaRocket",
+    marketCap: "$55k",
+    timeAgo: "40 mins ago",
+    creator: "8M32WX",
+    progress: 60,
+    onBuy: () => alert("Buying ShibaRocket"),
+    likes: 220,
+    imageUrl: "https://via.placeholder.com/64",
+  },
+];
+
 export default function JumpFun() {
   const router = useRouter();
   const onGotoCreate = useCallback(() => {
@@ -45,68 +140,6 @@ export default function JumpFun() {
 
   const [data, setData] = useState<TokenItem[]>([]);
 
-  const columns = [
-    {
-      title: "Ticker",
-      dataIndex: "ticker",
-      key: "ticker",
-      render: (text: any) => <span>{text}</span>,
-    },
-    {
-      title: "SeedFee",
-      dataIndex: "seedFee",
-      key: "seedFee",
-      render: (text: any, record: any) => {
-        const decimal = record.decimals;
-        const amount = formatTokenAmount(text || "", decimal);
-        return <span>{amount}</span>;
-      },
-    },
-    {
-      title: "TokenName",
-      dataIndex: "name",
-      key: "name",
-      render: (text: any) => <span>{text}</span>,
-    },
-    {
-      title: "Image",
-      dataIndex: "image",
-      key: "image",
-      render: (text: any, record: any) => {
-        return (
-          <Image
-            src={record.externalInfo.value.__ft_image_uri}
-            alt="External Image"
-            width={50}
-            height={50}
-          />
-        );
-      },
-    },
-    {
-      title: "Desc",
-      dataIndex: "desc",
-      key: "desc",
-      width: 150,
-      render: (text: any) => <span>{text}</span>,
-    },
-    {
-      title: "SocialMedia",
-      dataIndex: "socialMedia",
-      key: "socialMedia",
-      width: 150,
-      render: (text: string, record: any) => {
-        console.log(record.socialMedia);
-        return (
-          <div>
-            {record.socialMedia.map((ele: string) => (
-              <p>{ele}</p>
-            ))}
-          </div>
-        );
-      },
-    },
-  ];
   const { walletInfo, callViewMethod } = useConnectWallet();
   const getList = async () => {
     const rs: DataResponse<TokenList> = await callViewMethod({
@@ -150,7 +183,7 @@ export default function JumpFun() {
           create token
         </button>
       </div>
-      <div className="mx-[58px] rounded-lg bg-[#000000BF] h-[570px]">
+      <div className="w-full rounded-lg bg-[#000000BF] h-[570px]">
         <div className="flex justify-between items-center">
           <div className="px-[25px] py-[19px] home-tabs">
             <CustomTabs
@@ -161,23 +194,15 @@ export default function JumpFun() {
           </div>
           <Input
             placeholder="search for agents"
-            bordered={false}
             className="text-gray-700 placeholder-gray-500 flex-grow focus:outline-none"
           />
         </div>
+        <div className="grid grid-cols-3 gap-6 p-8 bg-black">
+          {mockData.map((data, index) => (
+            <TokenCard key={index} {...data} />
+          ))}
+        </div>
       </div>
-
-      {/* <div className="w-[1200px] m-auto">
-        <h2 className="text-[32px] font-bold text-white mb-5">
-          create history
-        </h2>
-        <Table
-          columns={columns}
-          dataSource={data}
-          rowKey="rank"
-          pagination={false}
-        />
-      </div> */}
     </div>
   );
 }
